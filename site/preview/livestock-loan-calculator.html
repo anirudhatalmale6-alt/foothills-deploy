@@ -1,0 +1,630 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Estimate the payment, total interest and cost per head of a cattle purchase. Runs entirely in your browser - nothing you enter is sent anywhere.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Livestock Loan Calculator | Foothills Livestock Co-op">
+  <meta property="og:site_name" content="Foothills Livestock Co-op">
+  <title>Livestock Loan Calculator | Foothills Livestock Co-op</title>
+  <style>
+:root{--bg:#f6f1e8;--panel:#fffaf3;--panel-2:#fdf8f0;--ink:#1e1f1b;--muted:#635f54;--brand:#6b3f1f;--brand-2:#8c5b31;--accent:#c89a52;--line:rgba(37,31,23,.12);--forest:#314233;--shadow:0 18px 50px rgba(25,20,14,.12);--shadow-2:0 30px 70px rgba(20,16,11,.18);--radius:24px;--radius-sm:16px;--max:1240px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at top right,rgba(200,154,82,.20),transparent 24%),linear-gradient(180deg,#efe6d8 0%,#f8f4ed 32%,#f6f1e8 100%)}a{text-decoration:none;color:inherit}img{display:block;max-width:100%}.container{width:min(calc(100% - 32px),var(--max));margin:0 auto}.mobile-only{display:none}.desktop-only{display:inline-flex}.topbar{background:#2a2f26;color:#f3ead8;font-size:.92rem;border-bottom:1px solid rgba(255,255,255,.08)}.topbar .wrap{display:flex;gap:18px;justify-content:space-between;align-items:center;padding:10px 0;flex-wrap:wrap}.topbar .left,.topbar .right{display:flex;gap:18px;flex-wrap:wrap;align-items:center}.pill-mini{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08)}header{position:sticky;top:0;z-index:50;backdrop-filter:saturate(180%) blur(16px);background:rgba(248,244,237,.88);border-bottom:1px solid rgba(37,31,23,.08)}.nav{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:14px 0}.brand{display:flex;gap:14px;align-items:center}.brand-logo{width:178px;height:62px;display:grid;place-items:center}.brand-logo img{width:100%;height:100%;object-fit:contain}.nav-links{display:flex;gap:24px;align-items:center;font-weight:700;color:#443f35}.nav-links>a{position:relative}.nav-links>a:after{content:"";position:absolute;left:0;bottom:-7px;width:100%;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:.25s}.nav-links>a:hover:after{transform:scaleX(1)}.nav-actions{display:flex;align-items:center;gap:12px}.nav-cta{display:flex;gap:12px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;border-radius:999px;border:1px solid transparent;font-weight:800;transition:.25s;position:relative;overflow:hidden}.btn:before{content:"";position:absolute;inset:-120% auto -120% -40%;width:38%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:translateX(-180%) skewX(-18deg);transition:transform .8s ease;pointer-events:none}.btn:hover:before{transform:translateX(420%) skewX(-18deg)}.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 12px 24px rgba(107,63,31,.22)}.btn.primary:hover,.btn.secondary:hover{transform:translateY(-2px)}.btn.secondary{border-color:var(--line);background:rgba(255,255,255,.72)}.menu-toggle{display:none;align-items:center;justify-content:center;width:52px;height:52px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.82);color:var(--ink);cursor:pointer;box-shadow:0 10px 24px rgba(25,20,14,.08);transition:.25s}.menu-toggle svg{width:22px;height:22px}.mobile-menu{display:none}.nav-item{position:relative;display:inline-flex;align-items:center}.nav-button{border:0;background:transparent;font:inherit;font-weight:800;color:#443f35;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px 0}.nav-button svg{width:16px;height:16px;transition:.25s}.nav-item:hover .nav-button svg{transform:rotate(180deg)}.dropdown{position:absolute;top:calc(100% + 16px);left:50%;transform:translateX(-50%) translateY(8px);min-width:560px;background:rgba(255,250,243,.97);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-2);padding:14px;opacity:0;visibility:hidden;pointer-events:none;transition:.24s;backdrop-filter:blur(14px)}.nav-item:hover .dropdown{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}.dropdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dropdown-grid a{padding:16px;border-radius:18px;border:1px solid transparent;background:rgba(255,255,255,.60);transition:.24s}.dropdown-grid a:hover{border-color:rgba(140,91,49,.22);background:#fff;transform:translateY(-2px);box-shadow:0 14px 26px rgba(25,20,14,.10)}.dropdown-grid strong{display:block;color:var(--ink);font-size:.98rem;margin-bottom:5px}.dropdown-grid span{display:block;color:var(--muted);font-size:.86rem;line-height:1.45}
+section{padding:36px 0}.hero{padding:46px 0 26px}.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:30px;align-items:stretch}.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(49,66,51,.08);border:1px solid rgba(49,66,51,.12);border-radius:999px;color:var(--forest);font-weight:800;font-size:.92rem}h1{font-size:clamp(2.6rem,5vw,5.1rem);line-height:.95;margin:18px 0;letter-spacing:-.04em;max-width:13ch}.hero-copy p,.lead{font-size:1.08rem;line-height:1.75;color:#4f4a40;max-width:68ch;margin:0 0 24px}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px;align-items:center}.hero-points{display:flex;gap:12px;flex-wrap:wrap}.hero-points span,.tag{padding:10px 14px;background:rgba(255,255,255,.76);border:1px solid var(--line);border-radius:999px;color:#4c463d;font-weight:700;font-size:.95rem}.visual-card{background:linear-gradient(180deg,rgba(42,47,38,.98),rgba(27,30,25,.98));color:#fff;border-radius:30px;box-shadow:var(--shadow-2);overflow:hidden;position:relative;min-height:500px;border:1px solid rgba(255,255,255,.06)}.visual-photo{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.94;transform:scale(1.02);transition:transform 1s ease}.visual-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,15,11,.20),rgba(17,15,11,.50))}.visual-card:hover .visual-photo{transform:scale(1.06)}.visual-inner{position:relative;z-index:1;padding:28px;display:flex;flex-direction:column;min-height:500px}.status{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.10);color:#f6ecd8;font-size:.88rem;border:1px solid rgba(255,255,255,.12)}.dot{width:9px;height:9px;border-radius:999px;background:#84c38f;box-shadow:0 0 0 5px rgba(132,195,143,.15)}.glass{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);border-radius:22px;backdrop-filter:blur(7px);box-shadow:0 14px 32px rgba(10,10,10,.12);transition:.35s}.glass:hover{transform:translateY(-4px);background:rgba(255,255,255,.13)}.hero-bottom{margin-top:auto;display:grid;gap:14px}.glass h3{margin:0 0 8px;font-size:1.35rem}.glass p{margin:0;color:rgba(255,255,255,.86);line-height:1.65}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:20px;flex-wrap:wrap}.section-head h2{font-size:clamp(2rem,4vw,3rem);margin:0;letter-spacing:-.03em}.section-head p{max-width:700px;color:var(--muted);line-height:1.75;margin:0}.grid{display:grid;gap:18px}.grid-2{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-4{grid-template-columns:repeat(4,1fr)}.card{background:rgba(255,255,255,.74);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;transition:.32s}.card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(25,20,14,.16);border-color:rgba(140,91,49,.22)}.card h3{margin:0 0 10px;font-size:1.2rem}.card p,.card li{color:var(--muted);line-height:1.7}.card ul{padding-left:20px;margin:12px 0 0}.icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(107,63,31,.12),rgba(200,154,82,.2));margin-bottom:18px;color:var(--brand);font-weight:900;font-size:1.2rem}.feature{background:rgba(255,255,255,.74);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;transition:.32s}.feature:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(25,20,14,.16);border-color:rgba(140,91,49,.22)}.premium-list{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:10px}.premium-list li{padding-left:28px;position:relative;color:#4e493f;line-height:1.7}.premium-list li:before{content:"";width:10px;height:10px;border-radius:999px;background:var(--accent);position:absolute;left:0;top:.55em}.cta-card{padding:28px;display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,rgba(107,63,31,.96),rgba(140,91,49,.96));color:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:.32s}.cta-card:hover{transform:translateY(-4px);box-shadow:0 30px 70px rgba(14,14,12,.28)}.cta-card h3{margin:0 0 10px;font-size:1.8rem}.cta-card p{margin:0;line-height:1.7;color:rgba(255,255,255,.84)}.cta-card .btn.secondary{background:#111!important;color:#fff!important;border:2px solid #d6a95a!important;box-shadow:0 0 0 2px rgba(214,169,90,.25),0 12px 28px rgba(0,0,0,.35),0 0 18px rgba(214,169,90,.45)!important}.timeline{position:relative}.timeline:before{content:"";position:absolute;left:28px;top:0;bottom:0;width:2px;background:linear-gradient(var(--accent),transparent)}.timeline-item{display:grid;grid-template-columns:58px 1fr;gap:16px;margin-bottom:16px}.timeline-num{width:56px;height:56px;border-radius:18px;background:linear-gradient(145deg,var(--brand),var(--brand-2));color:#fff;display:grid;place-items:center;font-weight:900;box-shadow:var(--shadow);position:relative;z-index:1}.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat strong{display:block;font-size:1.9rem}.stat span{color:var(--muted)}.notice{border-left:6px solid var(--accent);background:rgba(255,250,243,.9)}.brand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.brand-card{padding:0;overflow:hidden}.brand-card img{width:100%;height:230px;object-fit:cover;background:#fffaf3}.brand-card .body{padding:22px}.brand-card h3{font-size:1.35rem}.form-panel{background:linear-gradient(180deg,#2b3127,#1d201b);color:#fff;border-radius:30px;padding:28px;box-shadow:0 24px 60px rgba(14,14,12,.22)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:8px}.field.full{grid-column:1/-1}.field label{font-size:.92rem;color:rgba(255,255,255,.82)}.field input,.field textarea,.field select{width:100%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;padding:14px 16px;border-radius:16px;outline:none;font:inherit}.field textarea{min-height:140px}.doc-card{display:flex;justify-content:space-between;gap:18px;align-items:center}.badge{padding:7px 10px;border-radius:999px;background:#efe3cf;color:#6f5229;font-weight:800;font-size:.82rem}footer{padding:28px 0 50px;color:#534d42}.footer{display:grid;grid-template-columns:1.25fr .8fr .8fr .9fr;gap:18px;padding:26px;border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.68);box-shadow:var(--shadow)}.footer-logo-box{width:120px;height:48px}.footer-logo-box img{width:100%;height:100%;object-fit:contain}.brand-text strong{display:block;font-size:1.08rem}.brand-text span{display:block;color:var(--muted);font-size:.88rem;margin-top:2px}.footer h4{margin:0 0 12px}.footer p,.footer a{color:var(--muted);line-height:1.8}.footer-links{display:grid;gap:6px}.copyright{margin-top:16px;color:var(--muted);font-size:.94rem}.reveal{opacity:0;transform:translateY(22px) scale(.985);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}.reveal.visible{opacity:1;transform:none}[data-tilt]{transform-style:preserve-3d}.back-to-top{position:fixed;bottom:28px;right:28px;width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#6b3f1f,#8c5b31);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:9999;transition:.28s}.back-to-top:hover{transform:translateY(-3px) scale(1.03)}.back-to-top svg{width:28px;height:28px;fill:#fff}
+@media(max-width:1180px){.hero-grid,.grid-2{grid-template-columns:1fr}.grid-3,.grid-4,.brand-grid,.stat-row{grid-template-columns:repeat(2,1fr)}.dropdown{min-width:520px}.footer{grid-template-columns:repeat(2,1fr)}}@media(max-width:920px){.desktop-only,.nav-links,.nav-cta{display:none}.mobile-only,.menu-toggle{display:inline-flex}.nav{padding:12px 0;position:relative}.brand-logo{width:150px;height:52px}.mobile-menu{display:none;position:absolute;top:100%;left:0;right:0;z-index:100;margin-top:0;padding:16px;border-radius:0 0 22px 22px;border:1px solid var(--line);border-top:none;background:rgba(255,255,255,.97);box-shadow:0 18px 40px rgba(25,20,14,.18);max-height:calc(100vh - 80px);overflow-y:auto;-webkit-overflow-scrolling:touch}header.menu-open .mobile-menu{display:grid;gap:12px}.mobile-menu a{padding:14px 16px;border-radius:16px;font-weight:800;background:#fff;border:1px solid rgba(37,31,23,.08)}.mobile-menu details{border:1px solid rgba(37,31,23,.08);background:#fff;border-radius:16px;overflow:hidden}.mobile-menu summary{cursor:pointer;font-weight:900;padding:14px 16px}.mobile-sub{display:grid;gap:8px;padding:0 10px 10px}.mobile-sub a{background:#f8f4ed}.hero-grid{grid-template-columns:1fr}.hero-actions{display:grid;grid-template-columns:1fr 1fr}.hero-actions .btn{width:100%}.visual-card,.visual-inner{min-height:430px}}@media(max-width:760px){.container{width:min(calc(100% - 22px),var(--max))}.grid-3,.grid-4,.brand-grid,.stat-row,.footer,.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}h1{font-size:clamp(2.15rem,10vw,3.2rem);max-width:none}.hero-actions{grid-template-columns:1fr}.visual-card,.visual-inner{min-height:380px}.brand-logo{width:132px;height:46px}.brand-card img{height:210px}.doc-card{display:grid}.topbar{font-size:.84rem}.back-to-top{width:52px;height:52px;right:16px;bottom:16px}}
+
+
+/* Premium grouped navigation - fixed hover/click behavior */
+.nav{position:relative; flex-wrap:nowrap;}
+.brand-logo{width:178px;height:62px;}
+.brand-text{display:none;}
+.nav-links{display:flex;gap:24px;align-items:center;font-weight:700;color:#443f35;}
+.nav-links>a{position:relative;padding:12px 0;}
+.nav-links>a:after{content:"";position:absolute;left:0;bottom:4px;width:100%;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:.25s;}
+.nav-links>a:hover:after{transform:scaleX(1);}
+.nav-item{position:relative;display:inline-flex;align-items:center;padding:12px 0 18px;}
+.nav-button{border:0;background:transparent;font:inherit;font-weight:800;color:#443f35;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:0;}
+.nav-button svg{width:16px;height:16px;transition:.25s;}
+.nav-item:hover .nav-button svg,.nav-item.open .nav-button svg{transform:rotate(180deg);}
+.nav-item:after{content:"";position:absolute;left:-22px;right:-22px;top:100%;height:26px;}
+.dropdown{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%) translateY(8px);min-width:560px;background:rgba(255,250,243,.985);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-2);padding:14px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,transform .2s ease,visibility .2s;backdrop-filter:blur(14px);z-index:999;}
+.nav-item:hover .dropdown,.nav-item.open .dropdown{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.dropdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.dropdown-grid a{padding:16px;border-radius:18px;border:1px solid transparent;background:rgba(255,255,255,.65);transition:.24s;display:block;}
+.dropdown-grid a:hover{border-color:rgba(140,91,49,.25);background:#fff;transform:translateY(-2px);box-shadow:0 14px 26px rgba(25,20,14,.10);}
+.dropdown-grid strong{display:block;color:var(--ink);font-size:.98rem;margin-bottom:5px;}
+.dropdown-grid span{display:block;color:var(--muted);font-size:.86rem;line-height:1.45;}
+.mobile-menu details{border:1px solid rgba(37,31,23,.08);background:#fff;border-radius:16px;overflow:hidden;}
+.mobile-menu summary{cursor:pointer;font-weight:900;padding:14px 16px;}
+.mobile-sub{display:grid;gap:8px;padding:0 10px 10px;}
+.mobile-sub a{background:#f8f4ed;}
+@media(max-width:1120px){.nav-links{gap:16px}.dropdown{min-width:520px}.nav-cta .btn{padding:12px 15px;font-size:.9rem}.brand-logo{width:154px;height:54px}}
+@media(max-width:920px){.nav{flex-wrap:wrap}.nav-links,.nav-cta{display:none}.mobile-menu{left:0;right:0}.mobile-only,.menu-toggle{display:inline-flex}.nav-actions{margin-left:auto}}
+
+
+/* ===== Premium Dropdown Menu Fix ===== */
+.brand-text{display:none!important}
+.nav{position:relative}
+.nav-links{gap:10px; align-items:center; margin-left:auto}
+.nav-item{position:relative; padding:10px 0}
+.nav-item:after{content:""; position:absolute; left:0; right:0; top:100%; height:18px; background:transparent; display:block}
+.nav-trigger,.nav-links > a.nav-single{display:inline-flex; align-items:center; gap:7px; padding:10px 12px; border-radius:999px; font-weight:700; color:#3f392f; cursor:pointer; transition:.22s ease; border:0; background:transparent; font:inherit;}
+.nav-trigger:hover,.nav-links > a.nav-single:hover,.nav-item:hover .nav-trigger,.nav-item.open .nav-trigger{background:rgba(107,63,31,.08); color:var(--brand); transform:translateY(-1px)}
+.nav-trigger svg{width:14px;height:14px;transition:.22s ease}.nav-item:hover .nav-trigger svg,.nav-item.open .nav-trigger svg{transform:rotate(180deg)}
+.dropdown-menu{position:absolute; left:0; top:calc(100% + 8px); min-width:260px; z-index:999; padding:10px; border-radius:20px; border:1px solid rgba(37,31,23,.12); background:rgba(255,250,243,.98); box-shadow:0 22px 55px rgba(25,20,14,.18); opacity:0; visibility:hidden; pointer-events:none; transform:translateY(8px) scale(.985); transition:opacity .16s ease, transform .16s ease, visibility .16s ease;}
+.nav-item:hover .dropdown-menu,.nav-item:focus-within .dropdown-menu,.nav-item.open .dropdown-menu{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0) scale(1)}
+.dropdown-menu a{display:flex; flex-direction:column; gap:3px; padding:13px 14px; border-radius:14px; color:#2f2a22; transition:.2s ease; white-space:nowrap}.dropdown-menu a:hover{background:linear-gradient(135deg,rgba(107,63,31,.10),rgba(200,154,82,.13)); transform:translateX(3px); color:var(--brand)}
+.dropdown-menu a strong{font-size:.96rem}.dropdown-menu a span{font-size:.78rem; color:var(--muted); font-weight:600}.nav-links a:after,.nav-trigger:after,.dropdown-menu a:after{display:none!important}.nav-cta{margin-left:8px}
+@media (max-width:1180px){.nav-links{gap:4px}.nav-trigger,.nav-links > a.nav-single{padding:9px 9px}.nav-cta .btn{padding:12px 14px}}
+@media (max-width:920px){.brand-text{display:block!important}.mobile-menu{max-height:calc(100vh - 80px); overflow-y:auto; -webkit-overflow-scrolling:touch}.mobile-menu .mobile-section-title{padding:12px 14px 5px; color:var(--brand); font-size:.82rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; background:transparent; border:none}.mobile-menu a{display:block}.mobile-menu .btn{display:flex; justify-content:center}}
+
+.card:hover,.feature:hover{box-shadow:0 28px 60px rgba(25,20,14,.18),0 0 0 1px rgba(140,91,49,.15);border-color:rgba(140,91,49,.25)}
+.btn::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);pointer-events:none}
+.btn:hover::before{animation:btnShine .6s ease forwards}
+@keyframes btnShine{0%{left:-100%}100%{left:150%}}
+.stat:hover strong{color:var(--brand);transition:color .3s ease}
+.glass:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}
+.premium-list li{transition:padding-left .3s ease,color .3s ease}
+.premium-list{gap:4px}.premium-list li{transition:all .22s ease;cursor:default;padding:4px 8px 4px 28px;border-radius:8px;margin:0 -8px}.premium-list li:hover{background:rgba(200,154,82,.10);transform:translateX(4px)}.premium-list li:before{transition:all .22s ease;top:.65em}.premium-list li:hover:before{background:var(--brand);transform:scale(1.3)}.card h3,.feature h2{transition:color .25s ease}.card:hover h3,.feature:hover h2{color:var(--brand)}
+.cta-card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 32px 70px rgba(14,14,12,.3)}
+
+</style></head><body>
+<div class="topbar"><div class="container wrap"><div class="left"><span class="pill-mini">Rocky Mountain House, Alberta</span><span>Call: 403-845-6669</span></div><div class="right"><span>Mon–Fri • 9:00 AM – 4:00 PM</span><span>Email: frontdesk@foothillslivestock.ca</span></div></div></div>
+
+<header>
+  <div class="container nav">
+    <a href="/index.html" class="brand">
+      <div class="brand-logo" aria-hidden="true"><img src="/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op logo" /></div>
+      <div class="brand-text"><strong>Foothills Livestock Co-op</strong><span>Reliable Financing Solutions</span></div>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a class="nav-single" href="/index.html">Home</a>
+      <div class="nav-item"><button class="nav-trigger" type="button">Financing <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button><div class="dropdown-menu">
+        <a href="/how-it-works.html"><strong>How it Works</strong><span>Simple steps and clear next move</span></a>
+        <a href="/breeders-division.html"><strong>Breeders Division</strong><span>Financing for breeding operations</span></a>
+        <a href="/feeders-division.html"><strong>Feeders Division</strong><span>Support for feeder cattle needs</span></a>
+        <a href="/protection-plan.html"><strong>Protection Plan</strong><span>Risk protection and program details</span></a>
+      </div></div>
+      <div class="nav-item"><button class="nav-trigger" type="button">Resources <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg></button><div class="dropdown-menu">
+        <a href="/fieldmen.html"><strong>Fieldmen</strong><span>Find the right local contact</span></a>
+        <a href="/brands.html"><strong>Brands</strong><span>Livestock brand examples and info</span></a>
+        <a href="/forms.html"><strong>Forms</strong><span>Documents and applications</span></a>
+        <a href="/our-partners.html"><strong>Our Partners</strong><span>Industry relationships and support</span></a>
+        <a href="/service-areas.html"><strong>Service Areas</strong><span>Regions we serve across Alberta</span></a>
+        <a href="/faq.html"><strong>FAQ</strong><span>Common questions answered</span></a>
+      </div></div>
+      <a class="nav-single" href="/contact-us.html">Contact</a>
+    </nav>
+    <div class="nav-actions"><div class="nav-cta desktop-only"><a href="tel:4038456669" class="btn secondary">Call 403-845-6669</a><a href="/contact-us.html" class="btn primary">Request Financing</a></div><button class="menu-toggle mobile-only" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></button></div>
+    <div class="mobile-menu" id="mobileMenu"><div class="mobile-section-title">Main</div><a href="/index.html">Home</a><div class="mobile-section-title">Financing</div><a href="/how-it-works.html">How it Works</a><a href="/breeders-division.html">Breeders Division</a><a href="/feeders-division.html">Feeders Division</a><a href="/protection-plan.html">Protection Plan</a><div class="mobile-section-title">Resources</div><a href="/fieldmen.html">Fieldmen</a><a href="/brands.html">Brands</a><a href="/forms.html">Forms</a><a href="/our-partners.html">Our Partners</a><a href="/service-areas.html">Service Areas</a><a href="/faq.html">FAQ</a><div class="mobile-section-title">Contact</div><a href="/contact-us.html">Contact Us</a><a href="tel:4038456669" class="btn secondary">Call 403-845-6669</a><a href="/contact-us.html" class="btn primary">Request Financing</a></div>
+  </div>
+</header>
+<main>
+<section class="hero" style="padding-bottom:34px">
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <span class="eyebrow">Preview &mdash; not yet public</span>
+      <h1>Livestock Loan Calculator</h1>
+      <p>Work out the payment, the total cost of borrowing, and what the financing costs you per head and per hundredweight &mdash; before you go to the sale.</p>
+      <div class="hero-points"><span>Runs in your browser</span><span>Nothing is sent anywhere</span><span>Printable schedule</span></div>
+    </div>
+    <div class="visual-card reveal" data-tilt>
+      <div class="visual-photo" style="background-image:linear-gradient(180deg,rgba(17,15,11,.18),rgba(17,15,11,.40)),url('/assets/hero-feeders.jpg');background-position:center 42%"></div>
+      <div class="visual-inner">
+        <div><span class="status"><span class="dot"></span> Loan Calculator</span></div>
+        <div class="hero-bottom"><div class="glass" style="padding:22px">
+          <h3>Your numbers stay yours.</h3>
+          <p>Every figure is calculated on your own device. Nothing you type is transmitted or stored.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section><div class="container">
+
+<div class="calc-wrap reveal">
+  <div class="calc-grid">
+
+    <!-- ───────── inputs ───────── -->
+    <form class="calc-inputs" id="calcForm" autocomplete="off">
+      <div class="calc-block">
+        <h3>What you are buying</h3>
+        <div class="calc-mode" role="tablist">
+          <button type="button" class="calc-mode-btn active" data-mode="head" role="tab">By head</button>
+          <button type="button" class="calc-mode-btn" data-mode="total" role="tab">Total amount</button>
+        </div>
+
+        <div id="modeHead">
+          <div class="calc-row">
+            <label class="calc-field"><span>Head count</span>
+              <input type="number" id="iHead" value="100" min="1" step="1" inputmode="numeric"></label>
+            <label class="calc-field"><span>Price per head</span>
+              <div class="calc-prefixed"><em>$</em><input type="number" id="iPricePerHead" value="2400" min="0" step="10" inputmode="decimal"></div></label>
+          </div>
+          <label class="calc-field"><span>Average weight per head <i>(pounds &mdash; optional, gives cost per cwt)</i></span>
+            <input type="number" id="iWeight" value="650" min="0" step="10" inputmode="numeric"></label>
+        </div>
+
+        <div id="modeTotal" hidden>
+          <label class="calc-field"><span>Total purchase price</span>
+            <div class="calc-prefixed"><em>$</em><input type="number" id="iTotal" value="240000" min="0" step="1000" inputmode="decimal"></div></label>
+        </div>
+      </div>
+
+      <div class="calc-block">
+        <h3>The financing</h3>
+        <div class="calc-row">
+          <label class="calc-field"><span>Your contribution <i>(down payment)</i></span>
+            <div class="calc-prefixed"><em>$</em><input type="number" id="iDown" value="24000" min="0" step="1000" inputmode="decimal"></div></label>
+          <label class="calc-field"><span>Interest rate <i>(annual)</i></span>
+            <div class="calc-suffixed"><input type="number" id="iRate" value="8.5" min="0" max="60" step="0.05" inputmode="decimal"><em>%</em></div></label>
+        </div>
+        <div class="calc-row">
+          <label class="calc-field"><span>Repayment</span>
+            <select id="iFreq">
+              <option value="12">Monthly</option>
+              <option value="4">Quarterly</option>
+              <option value="2">Twice a year</option>
+              <option value="1">Annually</option>
+              <option value="0" selected>One payment when the cattle sell</option>
+            </select></label>
+          <label class="calc-field"><span>Term</span>
+            <div class="calc-termrow">
+              <input type="number" id="iTerm" value="9" min="1" step="1" inputmode="numeric">
+              <select id="iTermUnit">
+                <option value="m" selected>months</option>
+                <option value="y">years</option>
+              </select>
+            </div></label>
+        </div>
+        <label class="calc-field"><span>Other costs <i>(membership, inspection, admin &mdash; total for the deal)</i></span>
+          <div class="calc-prefixed"><em>$</em><input type="number" id="iFees" value="0" min="0" step="50" inputmode="decimal"></div></label>
+      </div>
+
+      <div class="calc-actions">
+        <button type="button" class="btn primary" id="btnPrint">Print this estimate</button>
+        <button type="button" class="btn secondary" id="btnReset">Reset</button>
+      </div>
+    </form>
+
+    <!-- ───────── results ───────── -->
+    <div class="calc-results" id="calcResults" aria-live="polite">
+      <div class="calc-headline">
+        <span class="calc-headline-lab" id="rPayLabel">Payment</span>
+        <span class="calc-headline-val" id="rPay">&mdash;</span>
+        <span class="calc-headline-note" id="rPayNote"></span>
+      </div>
+
+      <div class="calc-stats">
+        <div class="calc-stat"><span class="lab">Amount financed</span><span class="val" id="rPrincipal">&mdash;</span></div>
+        <div class="calc-stat"><span class="lab">Total interest</span><span class="val" id="rInterest">&mdash;</span></div>
+        <div class="calc-stat"><span class="lab">Other costs</span><span class="val" id="rFees">&mdash;</span></div>
+        <div class="calc-stat emph"><span class="lab">Total cost of borrowing</span><span class="val" id="rCost">&mdash;</span></div>
+      </div>
+
+      <div class="calc-perunit">
+        <div class="calc-stat"><span class="lab">Cost of borrowing per head</span><span class="val" id="rPerHead">&mdash;</span></div>
+        <div class="calc-stat"><span class="lab">Per hundredweight</span><span class="val" id="rPerCwt">&mdash;</span></div>
+      </div>
+
+      <p class="calc-plain" id="rPlain"></p>
+
+      <div class="calc-sched-head">
+        <h4>Payment schedule</h4>
+        <button type="button" class="calc-toggle" id="btnSched" aria-expanded="false">Show</button>
+      </div>
+      <div class="calc-sched" id="schedWrap" hidden>
+        <table class="calc-table">
+          <thead><tr><th>#</th><th>Payment</th><th>Interest</th><th>Principal</th><th>Balance</th></tr></thead>
+          <tbody id="schedBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="calc-disclaim">
+    <strong>An estimate, not an offer.</strong> This calculator uses the figures you
+    enter and standard interest arithmetic. It is not a quote, an approval, or a
+    commitment to lend, and the rate you type is your own assumption rather than a
+    rate offered by Foothills. Actual terms are set after a fieldman reviews your
+    operation and the cattle. Everything is calculated on your own device &mdash;
+    nothing you enter is transmitted or stored.
+  </p>
+</div>
+
+</div></section>
+
+<section><div class="container">
+  <div class="section-head reveal">
+    <h2>How to Read These Numbers</h2>
+    <p>Three things worth knowing before you use the result to make a decision.</p>
+  </div>
+  <div class="grid grid-3">
+    <div class="card reveal"><h3>Compare totals, not rates</h3><p>Two offers at the same rate can cost very different amounts once fees and term are in. The figure to compare between lenders is the total cost of borrowing in dollars.</p></div>
+    <div class="card reveal"><h3>Per hundredweight is the real unit</h3><p>You buy and sell cattle by the hundredweight, so financing cost per cwt puts borrowing into the same units as everything else you decide with.</p></div>
+    <div class="card reveal"><h3>Test it against a bad year</h3><p>Run it again with a lower sale price and a longer term than you expect. Financing that only works if everything goes right is not financing to sign.</p></div>
+  </div>
+</div></section>
+
+<section><div class="container">
+  <div class="section-head reveal">
+    <h2>Related Pages</h2><p>More on how Foothills finances cattle.</p>
+  </div>
+  <div class="card reveal" style="padding:26px 32px"><p>
+    <a href="/cattle-financing-rates.html">What cattle financing costs</a> &nbsp;&middot;&nbsp;
+    <a href="/how-it-works.html">How the financing works</a> &nbsp;&middot;&nbsp;
+    <a href="/livestock-financing-alberta.html">Financing in Alberta</a> &nbsp;&middot;&nbsp;
+    <a href="/protection-plan.html">Livestock Protection Plan</a>
+  </p></div>
+</div></section>
+
+<section class="reveal"><div class="container">
+  <div class="cta-card" data-tilt>
+    <div><h3>Want a real number for your purchase?</h3>
+    <p>Call the Foothills team and describe what you are buying. We will walk through how the cost is actually built.</p></div>
+    <a href="/contact-us.html" class="btn secondary">Contact Us</a>
+  </div>
+</div></section>
+</main>
+</main><style>
+.premium-footer{background:#2a2f26;color:#c5bfb3;padding:60px 0 0}
+.premium-footer .wrap{width:min(calc(100% - 32px),1240px);margin:0 auto}
+.pf-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)}
+.pf-brand img{height:44px;margin-bottom:16px;filter:brightness(1.8) saturate(.7)}
+.pf-brand p{line-height:1.7;font-size:.9rem;max-width:30ch}
+.pf-col h4{color:#e8e0d2;font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+.pf-col a{display:block;padding:5px 0;color:#a09888;font-size:.9rem;transition:color .2s,padding-left .2s}
+.pf-col a:hover{color:#e8c882;padding-left:4px}
+.pf-contact{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:.9rem}
+.pf-contact svg{width:16px;height:16px;margin-top:3px;flex-shrink:0;opacity:.5}
+.pf-bottom{display:flex;justify-content:space-between;align-items:center;padding:20px 0;font-size:.84rem;color:#7a7468}
+@media(max-width:1024px){.pf-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.pf-grid{grid-template-columns:1fr;gap:28px}.pf-bottom{flex-direction:column;gap:8px;text-align:center}}
+</style>
+<footer class="premium-footer">
+  <div class="wrap">
+    <div class="pf-grid">
+      <div class="pf-brand">
+        <img src="/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op">
+        <p>Foothills Livestock Co-op has been providing cattle financing to producers across Alberta, Saskatchewan, and British Columbia for over 30 years. Local office, local understanding, local support.</p>
+      </div>
+      <div class="pf-col">
+        <h4>Financing</h4>
+        <a href="/breeders-division.html">Breeders Division</a>
+        <a href="/feeders-division.html">Feeders Division</a>
+        <a href="/protection-plan.html">Protection Plan</a>
+        <a href="/how-it-works.html">How It Works</a>
+        <a href="/livestock-financing-saskatchewan.html">Financing in Saskatchewan</a>
+        <a href="/livestock-financing-british-columbia.html">Financing in BC</a>
+        <a href="/livestock-financing-alberta.html">Financing in Alberta</a>
+        <a href="/ranch-financing-western-canada.html">Ranch Financing</a>
+        <a href="/cattle-financing-rates.html">Rates &amp; Costs</a>
+      </div>
+      <div class="pf-col">
+        <h4>Resources</h4>
+        <a href="/forms.html">Forms</a>
+        <a href="/brands.html">Brands</a>
+        <a href="/fieldmen.html">Fieldmen</a>
+        <a href="/our-partners.html">Partners</a>
+        <a href="/service-areas.html">Service Areas</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/contact-us.html">Contact Us</a>
+      </div>
+      <div class="pf-col">
+        <h4>Contact</h4>
+        <div class="pf-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg><div><div>403-845-6669</div><div>Toll Free: 1-866-848-6669</div></div></div>
+        <div class="pf-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><div>frontdesk@foothillslivestock.ca</div></div>
+        <div class="pf-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><div>Box 725, Rocky Mountain House,<br>AB T4T 1A5</div></div>
+        <div class="pf-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><div>Mon&ndash;Fri: 9:00 AM &ndash; 4:00 PM</div></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <span>&copy; 2026 Foothills Livestock Co-op. All rights reserved.</span>
+      <a href="/sitemap.xml" style="color:#7a7468;text-decoration:none;font-size:.84rem;opacity:.7;transition:opacity .2s" onmouseover="this.style.opacity=&apos;1&apos;" onmouseout="this.style.opacity=&apos;.7&apos;">Sitemap</a>
+      <span>Proudly serving Western Canadian producers since 1996.</span>
+    </div>
+  </div>
+</footer><button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"><svg viewBox="0 0 64 64"><path d="M8 32c0-6 6-10 14-10h20c8 0 14 4 14 10s-6 10-14 10H22c-8 0-14-4-14-10z"/><circle cx="22" cy="30" r="2"/><circle cx="42" cy="30" r="2"/><path d="M6 24l6-6M58 24l-6-6" stroke="white" stroke-width="3" fill="none"/></svg></button>
+<script>
+const header=document.querySelector('header');const menuToggle=document.querySelector('.menu-toggle');const mobileMenuLinks=document.querySelectorAll('.mobile-menu a');if(menuToggle&&header){menuToggle.addEventListener('click',()=>{const open=header.classList.toggle('menu-open');menuToggle.setAttribute('aria-expanded',open?'true':'false')});mobileMenuLinks.forEach(link=>link.addEventListener('click',()=>{header.classList.remove('menu-open');menuToggle.setAttribute('aria-expanded','false')}));window.addEventListener('resize',()=>{if(window.innerWidth>920){header.classList.remove('menu-open');menuToggle.setAttribute('aria-expanded','false')}})}
+const io=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible')})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=`${Math.min(i%4,3)*70}ms`;io.observe(el)});
+document.querySelectorAll('[data-tilt]').forEach((el)=>{let raf=null;const reset=()=>{el.style.transform='';const photo=el.querySelector('.visual-photo');if(photo)photo.style.transform='scale(1.02)'};el.addEventListener('mousemove',(e)=>{if(window.innerWidth<=920)return;const rect=el.getBoundingClientRect();const px=(e.clientX-rect.left)/rect.width;const py=(e.clientY-rect.top)/rect.height;const rx=(.5-py)*5.5;const ry=(px-.5)*7.5;cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{el.style.transform=`perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;const photo=el.querySelector('.visual-photo');if(photo){const mx=(px-.5)*10;const my=(py-.5)*10;photo.style.transform=`scale(1.06) translate(${mx}px, ${my}px)`}})});el.addEventListener('mouseleave',()=>{cancelAnimationFrame(raf);reset()})});
+</script>
+
+<script>
+  // Keeps desktop dropdowns clickable and prevents fast disappearing while moving the mouse.
+  document.querySelectorAll('.nav-item').forEach((item) => {
+    let closeTimer;
+    const btn = item.querySelector('.nav-button');
+    const open = () => { clearTimeout(closeTimer); item.classList.add('open'); if(btn) btn.setAttribute('aria-expanded','true'); };
+    const close = () => { closeTimer = setTimeout(() => { item.classList.remove('open'); if(btn) btn.setAttribute('aria-expanded','false'); }, 180); };
+    item.addEventListener('mouseenter', open);
+    item.addEventListener('mouseleave', close);
+    if(btn){
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.nav-item.open').forEach(i => { if(i!==item) i.classList.remove('open'); });
+        item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', item.classList.contains('open') ? 'true' : 'false');
+      });
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('.nav-item')) document.querySelectorAll('.nav-item.open').forEach(i => i.classList.remove('open'));
+  });
+</script>
+
+
+
+
+<!-- Chatbot Widget -->
+<script>
+  window.FOOTHILLS_CHAT_CONFIG = {
+    apiUrl: "/chatbot",
+    businessName: "Foothills Livestock",
+    primaryColor: "#6b3f1f",
+    position: "bottom-right"
+  };
+</script>
+<script src="/chatbot/foothills-chat.js" defer></script>
+<script src="/assets/fh-analytics.js" defer></script>
+<style>
+/* ── Livestock loan calculator ─────────────────────────────────────────
+   Scoped to .calc-* so it cannot touch anything else on the site.
+   Colours are the site's own custom properties, with hard fallbacks in
+   case this page is ever viewed standalone.                            */
+.calc-wrap{background:var(--panel,#fffbf5);border:1px solid var(--line,rgba(37,31,23,.10));
+  border-radius:var(--radius,20px);padding:30px;box-shadow:var(--shadow,0 16px 48px rgba(25,20,14,.10))}
+.calc-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:start}
+
+.calc-block{margin-bottom:26px}
+.calc-block:last-of-type{margin-bottom:20px}
+.calc-block h3{font-family:Georgia,serif;font-weight:normal;font-size:1.28rem;
+  color:var(--brand,#6b3f1f);margin:0 0 14px}
+
+.calc-mode{display:inline-flex;background:#efe6d8;border-radius:999px;padding:4px;margin-bottom:18px}
+.calc-mode-btn{border:0;background:transparent;font:inherit;font-size:.92rem;font-weight:600;
+  color:var(--muted,#635f54);padding:8px 20px;border-radius:999px;cursor:pointer;transition:.18s}
+.calc-mode-btn.active{background:var(--brand,#6b3f1f);color:#fffbf5;box-shadow:0 2px 8px rgba(25,20,14,.16)}
+
+.calc-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.calc-field{display:block;margin-bottom:14px}
+.calc-field > span{display:block;font-size:.83rem;font-weight:700;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--muted,#635f54);margin-bottom:6px}
+.calc-field > span i{font-style:normal;font-weight:500;text-transform:none;letter-spacing:0;opacity:.8}
+.calc-field input,.calc-field select{width:100%;font:inherit;font-size:1.05rem;
+  padding:11px 13px;border:1px solid #d8cfc0;border-radius:var(--radius-sm,12px);
+  background:#fff;color:var(--ink,#1e1f1b);-webkit-appearance:none;appearance:none}
+.calc-field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23635f54' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.calc-field input:focus,.calc-field select:focus{outline:0;border-color:var(--accent,#c89a52);
+  box-shadow:0 0 0 3px rgba(200,154,82,.22)}
+
+.calc-prefixed,.calc-suffixed{position:relative;display:block}
+.calc-prefixed em,.calc-suffixed em{position:absolute;top:50%;transform:translateY(-50%);
+  font-style:normal;font-weight:700;color:var(--muted,#635f54);pointer-events:none}
+.calc-prefixed em{left:13px}
+.calc-prefixed input{padding-left:30px}
+.calc-suffixed em{right:14px}
+.calc-suffixed input{padding-right:34px}
+.calc-termrow{display:grid;grid-template-columns:1fr 1.25fr;gap:8px}
+
+.calc-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ── results ── */
+.calc-results{background:var(--forest-deep,#1f2d22);color:#e6e0d2;
+  border-radius:var(--radius,20px);padding:28px 30px;position:sticky;top:96px}
+.calc-headline{border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:20px;margin-bottom:20px}
+.calc-headline-lab{display:block;font-size:.78rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent-light,#e8c882);margin-bottom:8px}
+.calc-headline-val{display:block;font-family:Georgia,serif;font-size:2.7rem;line-height:1.05;color:#fffbf5}
+.calc-headline-note{display:block;font-size:.9rem;color:#b8b1a2;margin-top:7px}
+
+.calc-stats,.calc-perunit{display:grid;gap:1px;background:rgba(255,255,255,.10);
+  border-radius:var(--radius-sm,12px);overflow:hidden;margin-bottom:16px}
+.calc-stat{display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  background:var(--forest-deep,#1f2d22);padding:13px 16px}
+.calc-stat .lab{font-size:.9rem;color:#b8b1a2}
+.calc-stat .val{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fffbf5}
+.calc-stat.emph{background:rgba(200,154,82,.16)}
+.calc-stat.emph .lab{color:#f0e7d5}
+.calc-stat.emph .val{color:var(--accent-light,#e8c882);font-size:1.12rem}
+
+.calc-plain{font-size:.93rem;line-height:1.62;color:#c9c2b2;margin:0 0 18px}
+.calc-plain strong{color:#fffbf5}
+
+.calc-sched-head{display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid rgba(255,255,255,.12);padding-top:16px}
+.calc-sched-head h4{margin:0;font-size:.96rem;color:#e6e0d2;font-weight:700}
+.calc-toggle{border:1px solid rgba(255,255,255,.28);background:transparent;color:#e8c882;
+  font:inherit;font-size:.86rem;font-weight:600;padding:5px 15px;border-radius:999px;cursor:pointer}
+.calc-toggle:hover{background:rgba(255,255,255,.07)}
+.calc-sched{max-height:330px;overflow:auto;margin-top:14px}
+.calc-table{width:100%;border-collapse:collapse;font-size:.86rem}
+.calc-table th{position:sticky;top:0;background:#18241b;text-align:right;color:#b8b1a2;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:8px 9px;font-weight:700}
+.calc-table th:first-child,.calc-table td:first-child{text-align:left}
+.calc-table td{text-align:right;padding:8px 9px;border-bottom:1px solid rgba(255,255,255,.07);
+  font-variant-numeric:tabular-nums;color:#ddd6c6}
+
+.calc-disclaim{margin:26px 0 0;padding:16px 18px;background:#f3ece0;
+  border-left:4px solid var(--accent,#c89a52);border-radius:var(--radius-sm,12px);
+  font-size:.9rem;line-height:1.62;color:#4d4740}
+
+@media (max-width:980px){
+  .calc-grid{grid-template-columns:1fr}
+  .calc-results{position:static}
+  .calc-wrap{padding:22px}
+}
+@media (max-width:620px){
+  .calc-row{grid-template-columns:1fr}
+  .calc-headline-val{font-size:2.15rem}
+  .calc-wrap{padding:18px}
+}
+@media print{
+  .calc-results{background:#fff !important;color:#1e1f1b !important;
+    border:1px solid #ccc;position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .calc-stat{background:#fff !important}
+  .calc-stat .lab,.calc-stat .val,.calc-headline-val,.calc-plain,.calc-plain strong{color:#1e1f1b !important}
+  .calc-headline-lab{color:#6b3f1f !important}
+  .calc-table td{color:#1e1f1b !important}
+  .calc-table th{background:#eee !important;color:#333 !important}
+  .calc-actions,.calc-toggle,.calc-mode{display:none !important}
+  .calc-sched{max-height:none;overflow:visible}
+  .calc-sched[hidden]{display:block !important}
+}
+</style>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var form = $('calcForm');
+  if(!form) return;
+
+  var DEFAULTS = {iHead:100,iPricePerHead:2400,iWeight:650,iTotal:240000,
+                  iDown:24000,iRate:8.5,iTerm:9,iFees:0};
+  var mode = 'head';
+
+  function num(id){ var v = parseFloat(($(id)||{}).value); return isFinite(v) ? v : 0; }
+  function money(n){
+    if(!isFinite(n)) return '—';
+    return '$' + n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function money0(n){
+    if(!isFinite(n)) return '—';
+    return '$' + Math.round(n).toLocaleString('en-CA');
+  }
+
+  /* Term is always converted to MONTHS first, then to whatever the payment
+     frequency needs. Doing it the other way round makes a 9-month term with
+     quarterly payments come out as 9 quarters. */
+  function termMonths(){
+    var t = num('iTerm');
+    return $('iTermUnit').value === 'y' ? t * 12 : t;
+  }
+
+  function compute(){
+    var purchase = mode === 'head' ? num('iHead') * num('iPricePerHead') : num('iTotal');
+    var down = Math.min(num('iDown'), purchase);
+    var principal = Math.max(purchase - down, 0);
+    var annual = num('iRate') / 100;
+    var months = Math.max(termMonths(), 0);
+    var freq = parseInt($('iFreq').value, 10);   // 0 = single payment at sale
+    var fees = num('iFees');
+    var head = mode === 'head' ? num('iHead') : 0;
+    var weight = num('iWeight');
+
+    var rows = [], interest = 0, payment = 0, label = 'Payment', note = '';
+
+    if(principal <= 0 || months <= 0){
+      return {purchase:purchase, principal:principal, interest:0, fees:fees,
+              payment:0, label:'Payment', note:'', rows:[], head:head, weight:weight};
+    }
+
+    if(freq === 0){
+      /* One payment when the cattle sell. Simple interest over the period -
+         which is how this kind of feeder financing is normally quoted, and
+         is NOT the same as an amortised loan with one payment. */
+      interest = principal * annual * (months / 12);
+      payment = principal + interest;
+      label = 'Due when the cattle sell';
+      note = 'One payment in ' + months + ' month' + (months === 1 ? '' : 's') +
+             ' — principal plus simple interest';
+      rows.push({n:1, pay:payment, int:interest, prin:principal, bal:0});
+    } else {
+      var n = Math.max(Math.round(months / 12 * freq), 1);
+      var r = annual / freq;
+      payment = r === 0 ? principal / n
+                        : principal * r / (1 - Math.pow(1 + r, -n));
+      var bal = principal;
+      for(var i = 1; i <= n; i++){
+        var ip = bal * r;
+        var pp = payment - ip;
+        /* Float drift leaves a fraction of a cent on the last row; settle it
+           against the balance so the schedule ends at exactly zero. */
+        if(i === n){ pp = bal; }
+        bal = Math.max(bal - pp, 0);
+        interest += ip;
+        rows.push({n:i, pay:ip + pp, int:ip, prin:pp, bal:bal});
+      }
+      var names = {12:'month', 4:'quarter', 2:'half-year', 1:'year'};
+      label = 'Payment per ' + names[freq];
+      note = n + ' payment' + (n === 1 ? '' : 's') + ' over ' + months + ' months';
+    }
+    return {purchase:purchase, principal:principal, interest:interest, fees:fees,
+            payment:payment, label:label, note:note, rows:rows, head:head, weight:weight};
+  }
+
+  function render(){
+    var c = compute();
+    var cost = c.interest + c.fees;
+
+    $('rPayLabel').textContent = c.label;
+    $('rPay').textContent = c.payment > 0 ? money(c.payment) : '—';
+    $('rPayNote').textContent = c.note;
+
+    $('rPrincipal').textContent = money0(c.principal);
+    $('rInterest').textContent = money0(c.interest);
+    $('rFees').textContent = money0(c.fees);
+    $('rCost').textContent = money0(cost);
+
+    $('rPerHead').textContent = c.head > 0 ? money(cost / c.head) : 'enter head count';
+    var cwt = c.head > 0 && c.weight > 0 ? (c.head * c.weight) / 100 : 0;
+    $('rPerCwt').textContent = cwt > 0 ? money(cost / cwt) + ' /cwt' : 'enter average weight';
+
+    if(c.principal > 0 && cost > 0){
+      var pct = (cost / c.principal * 100);
+      $('rPlain').innerHTML = 'Borrowing <strong>' + money0(c.principal) +
+        '</strong> costs you <strong>' + money0(cost) + '</strong> in total, which is <strong>' +
+        pct.toFixed(1) + '%</strong> of the amount financed over the whole term.' +
+        (c.head > 0 ? ' On ' + c.head + ' head that is <strong>' + money(cost / c.head) +
+        '</strong> a head.' : '');
+    } else {
+      $('rPlain').innerHTML = 'Enter a purchase price, a contribution and a term to see the cost.';
+    }
+
+    var tb = $('schedBody'), out = '';
+    c.rows.forEach(function(r){
+      out += '<tr><td>' + r.n + '</td><td>' + money(r.pay) + '</td><td>' + money(r.int) +
+             '</td><td>' + money(r.prin) + '</td><td>' + money(r.bal) + '</td></tr>';
+    });
+    tb.innerHTML = out || '<tr><td colspan="5" style="text-align:left;padding:14px 9px">No schedule yet.</td></tr>';
+  }
+
+  /* mode switch */
+  Array.prototype.forEach.call(document.querySelectorAll('.calc-mode-btn'), function(b){
+    b.addEventListener('click', function(){
+      mode = b.dataset.mode;
+      Array.prototype.forEach.call(document.querySelectorAll('.calc-mode-btn'), function(x){
+        x.classList.toggle('active', x === b);
+      });
+      $('modeHead').hidden = mode !== 'head';
+      $('modeTotal').hidden = mode !== 'total';
+      render();
+    });
+  });
+
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+
+  $('btnSched').addEventListener('click', function(){
+    var w = $('schedWrap'), open = w.hidden;
+    w.hidden = !open;
+    this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    this.textContent = open ? 'Hide' : 'Show';
+  });
+
+  $('btnReset').addEventListener('click', function(){
+    Object.keys(DEFAULTS).forEach(function(k){ if($(k)) $(k).value = DEFAULTS[k]; });
+    $('iFreq').value = '0';
+    $('iTermUnit').value = 'm';
+    render();
+  });
+
+  $('btnPrint').addEventListener('click', function(){ window.print(); });
+
+  render();
+})();
+</script>
+
+</body></html>
