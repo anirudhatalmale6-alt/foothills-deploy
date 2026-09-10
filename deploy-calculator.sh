@@ -122,16 +122,30 @@ PASS=""; PASS2=""
 
 # ── 3. the nginx location block ─────────────────────────────────────────────
 say "Finding the nginx config for this site"
-CONFS=$(grep -rl -- "$SITE" /etc/nginx/ 2>/dev/null | grep -v htpasswd)
+# On Debian and Ubuntu, sites-enabled/foothills is a SYMLINK to
+# sites-available/foothills, so a plain grep finds the same file twice and a
+# naive count of 2 stops a deploy that was perfectly fine. Resolve every hit to
+# its real path first, then count the distinct ones.
+RAWCONFS=$(grep -rl -- "$SITE" /etc/nginx/ 2>/dev/null | grep -v htpasswd)
+CONFS=""
+for c in $RAWCONFS; do
+  real=$(readlink -f "$c" 2>/dev/null || printf '%s' "$c")
+  case " $CONFS " in
+    *" $real "*) : ;;
+    *) CONFS="$CONFS $real" ;;
+  esac
+done
+CONFS=$(printf '%s\n' $CONFS)
 COUNT=$(printf '%s\n' "$CONFS" | grep -c . )
 if [ "$COUNT" -ne 1 ]; then
-  echo "    Expected exactly one config mentioning $SITE, found $COUNT:"
+  echo "    Expected one config mentioning $SITE, found $COUNT distinct files:"
   printf '%s\n' "$CONFS" | sed 's/^/      /'
   echo "    Not going to guess. Send me this list and I will tell you which one."
   exit 1
 fi
 CONF="$CONFS"
 ok "$CONF"
+case "$RAWCONFS" in *sites-enabled*) note "(sites-enabled is a symlink to this file, so it is one config, not two)" ;; esac
 
 if grep -q "$MARKER" "$CONF"; then
   note "the protected block is already in there - leaving the config alone"

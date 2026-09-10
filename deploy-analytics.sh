@@ -70,10 +70,17 @@ cat > "$TMP/ga.html" <<'GAEOF'
 GAEOF
 
 say "Adding the Google Analytics tag where it is missing"
-ADDED=0; HAD=0; SKIP=0
+ADDED=0; HAD=0; SKIP=0; SKIPPED=""
 for f in "$SITE"/*.html; do
   if grep -q "$GA_ID" "$f"; then HAD=$((HAD+1)); continue; fi
-  if ! grep -q '</head>' "$f"; then SKIP=$((SKIP+1)); note "no </head> in $(basename "$f") - left alone"; continue; fi
+  # Files with no <head> are not pages - the Google Search Console verification
+  # stub is one. Record them so the check at the end does not report them as a
+  # failure for being exactly what we intended.
+  if ! grep -q '</head>' "$f"; then
+    SKIP=$((SKIP+1)); SKIPPED="$SKIPPED $(basename "$f")"
+    note "no </head> in $(basename "$f") - not a page, left alone"
+    continue
+  fi
   # awk, not sed - a sed replacement holding a multi-line HTML block means
   # escaping newlines, ampersands and the delimiter all at once, and one page
   # with an odd character silently gets no tag.
@@ -129,11 +136,14 @@ ok "$EADD page(s) updated, $EHAD already had it"
 say "Checking the server"
 MISSING=0; TOTAL=0
 for f in "$SITE"/*.html; do
-  n=$(basename "$f"); TOTAL=$((TOTAL+1))
+  n=$(basename "$f")
+  case " $SKIPPED " in *" $n "*) continue ;; esac
+  TOTAL=$((TOTAL+1))
   curl -sS -m 20 -o "$TMP/c" -H "Host: $HOST" "http://127.0.0.1/$n" 2>/dev/null
   grep -q "$GA_ID" "$TMP/c" || { MISSING=$((MISSING+1)); note "no GA tag served on $n"; }
 done
-[ "$MISSING" -eq 0 ] && ok "all $TOTAL public pages serve the GA tag" || bad "$MISSING of $TOTAL pages still missing it"
+[ "$MISSING" -eq 0 ] && ok "all $TOTAL pages serve the GA tag" || bad "$MISSING of $TOTAL pages still missing it"
+[ -n "$SKIPPED" ] && note "not counted (no <head>, so not pages):$SKIPPED"
 
 code=$(curl -sS -m 20 -o "$TMP/ev" -w '%{http_code}' -H "Host: $HOST" "http://127.0.0.1/assets/fh-events.js" 2>/dev/null)
 if [ "$code" = "200" ] && grep -q 'phone_click' "$TMP/ev"; then ok "fh-events.js is served"; else bad "fh-events.js returned $code"; fi
