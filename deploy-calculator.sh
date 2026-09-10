@@ -192,13 +192,28 @@ else
   # Put the protected location in EVERY block that serves this root. A request
   # can arrive at either listener, and protecting only one of them is a lock on
   # the front door with the back door open.
-  ROOTS=$(grep -cE "^[[:space:]]*root[[:space:]]+${SITE}/?[[:space:]]*;" "$CONF")
+  # Count only the root lines that sit DIRECTLY inside a server block.
+  #
+  # A root can also appear inside a location, and inserting a location after
+  # one of those nests it - nginx then says
+  #   location "/preview/" is outside location "^/chatbot/..."
+  # and refuses the whole config. So brace depth decides, not the text.
+  ROOTS=$(awk -v site="$SITE" '
+    { line = $0
+      sub(/#.*/, "", line)
+      if (depth == 1 && line ~ ("^[ \t]*root[ \t]+" site "/?[ \t]*;")) n++
+      o = gsub(/{/, "{", line); c = gsub(/}/, "}", line)
+      depth += o - c
+    }
+    END { print n + 0 }
+  ' "$CONF")
   if [ "$ROOTS" -lt 1 ]; then
-    echo "    Found no 'root $SITE;' line in that file. Send me:"
-    echo "      sudo grep -n 'root\\|listen\\|server_name' $CONF"
+    echo "    Found no server-level 'root $SITE;' line in that file. Send me:"
+    echo "      sudo grep -n 'root\\|listen\\|server_name\\|location' $CONF"
     exit 1
   fi
-  note "$ROOTS server block(s) in that file serve this site - protecting all of them"
+  note "$ROOTS server block(s) serve this site at server level - protecting all of them"
+  note "(root lines inside a location are skipped - nesting a location inside one is a config error)"
   # The backup does NOT go next to the config. nginx.conf normally does
   # `include /etc/nginx/sites-enabled/*;` - a wildcard with no extension filter -
   # so a file called foothills.before-preview-... sitting in that directory gets
@@ -215,16 +230,22 @@ else
   # block by definition. Hunting for the block's closing brace with sed is the
   # fragile way to do this.
   awk -v marker="$MARKER" -v site="$SITE" '
-    { print }
-    $0 ~ ("^[ \t]*root[ \t]+" site "/?[ \t]*;") {
-      print ""
-      print "    " marker " - preview pages, password protected. Remove this block to unpublish."
-      print "    location ^~ /preview/ {"
-      print "        auth_basic \"Foothills preview\";"
-      print "        auth_basic_user_file /etc/nginx/foothills-preview.htpasswd;"
-      print "        add_header X-Robots-Tag \"noindex, nofollow\" always;"
-      print "        try_files $uri $uri/ =404;"
-      print "    }"
+    { print
+      line = $0
+      sub(/#.*/, "", line)
+      atserver = (depth == 1 && line ~ ("^[ \t]*root[ \t]+" site "/?[ \t]*;"))
+      o = gsub(/{/, "{", line); c = gsub(/}/, "}", line)
+      depth += o - c
+      if (atserver) {
+        print ""
+        print "    " marker " - preview pages, password protected. Remove this block to unpublish."
+        print "    location ^~ /preview/ {"
+        print "        auth_basic \"Foothills preview\";"
+        print "        auth_basic_user_file /etc/nginx/foothills-preview.htpasswd;"
+        print "        add_header X-Robots-Tag \"noindex, nofollow\" always;"
+        print "        try_files $uri $uri/ =404;"
+        print "    }"
+      }
     }
   ' "$CBK" > "$TMP/newconf" || exit 1
 
