@@ -126,7 +126,7 @@ say "Finding the nginx config for this site"
 # sites-available/foothills, so a plain grep finds the same file twice and a
 # naive count of 2 stops a deploy that was perfectly fine. Resolve every hit to
 # its real path first, then count the distinct ones.
-RAWCONFS=$(grep -rl -- "$SITE" /etc/nginx/ 2>/dev/null | grep -v htpasswd)
+RAWCONFS=$(grep -rl -- "$SITE" /etc/nginx/ 2>/dev/null | grep -v htpasswd | grep -vE '\.(bak|orig|save|dpkg-[a-z]+)$|before-preview')
 CONFS=""
 for c in $RAWCONFS; do
   real=$(readlink -f "$c" 2>/dev/null || printf '%s' "$c")
@@ -137,15 +137,52 @@ for c in $RAWCONFS; do
 done
 CONFS=$(printf '%s\n' $CONFS)
 COUNT=$(printf '%s\n' "$CONFS" | grep -c . )
+
+# More than one file mentions the site root. On many boxes sites-enabled is a
+# symlink and readlink collapses the pair; on this one they are two separate
+# files, so that is not enough.
+#
+# Do not guess which is live. `nginx -T` prints the config nginx has actually
+# LOADED, each file introduced by "# configuration file <path>:". Anything not
+# in that list is not being served, whatever it contains. That is nginx's own
+# answer rather than a convention I am assuming.
+if [ "$COUNT" -gt 1 ]; then
+  note "$COUNT files mention $SITE - asking nginx which one it actually loads"
+  LOADED=$(nginx -T 2>/dev/null | sed -n 's/^# configuration file \(.*\):$/\1/p')
+  LIVE=""
+  for c in $CONFS; do
+    for l in $LOADED; do
+      lr=$(readlink -f "$l" 2>/dev/null || printf '%s' "$l")
+      [ "$lr" = "$c" ] && { case " $LIVE " in *" $c "*) : ;; *) LIVE="$LIVE $c" ;; esac; }
+    done
+  done
+  LIVE=$(printf '%s\n' $LIVE)
+  LIVECOUNT=$(printf '%s\n' "$LIVE" | grep -c . )
+  if [ "$LIVECOUNT" -eq 1 ]; then
+    ok "nginx loads exactly one of them"
+    for c in $CONFS; do
+      case " $LIVE " in
+        *" $c "*) note "  live     $c" ;;
+        *)        note "  not used $c  (nginx never reads this one)" ;;
+      esac
+    done
+    CONFS="$LIVE"; COUNT=1
+  else
+    echo "    nginx loads $LIVECOUNT of them, so I still cannot tell which to edit:"
+    printf '%s\n' "$CONFS" | sed 's/^/      /'
+    echo "    Send me this and the output of:  sudo nginx -T | grep -n 'configuration file'"
+    exit 1
+  fi
+fi
+
 if [ "$COUNT" -ne 1 ]; then
-  echo "    Expected one config mentioning $SITE, found $COUNT distinct files:"
+  echo "    Expected one config mentioning $SITE, found $COUNT:"
   printf '%s\n' "$CONFS" | sed 's/^/      /'
   echo "    Not going to guess. Send me this list and I will tell you which one."
   exit 1
 fi
 CONF="$CONFS"
 ok "$CONF"
-case "$RAWCONFS" in *sites-enabled*) note "(sites-enabled is a symlink to this file, so it is one config, not two)" ;; esac
 
 if grep -q "$MARKER" "$CONF"; then
   note "the protected block is already in there - leaving the config alone"
@@ -156,9 +193,17 @@ else
     echo "    Stopping rather than editing the wrong server block."
     exit 1
   fi
-  CBK="$CONF.before-preview-$(date +%Y%m%d-%H%M%S)"
+  # The backup does NOT go next to the config. nginx.conf normally does
+  # `include /etc/nginx/sites-enabled/*;` - a wildcard with no extension filter -
+  # so a file called foothills.before-preview-... sitting in that directory gets
+  # LOADED as a second copy of the same server block. That is a duplicate
+  # listen/server_name pair, and it is a way to break the site while trying to
+  # be careful. Keep backups somewhere nginx never looks.
+  mkdir -p /var/backups 2>/dev/null
+  CBK="/var/backups/foothills-nginx-$(basename "$CONF")-$(date +%Y%m%d-%H%M%S).conf"
   cp -p "$CONF" "$CBK" || exit 1
   ok "config backed up to $CBK"
+  note "(kept outside /etc/nginx on purpose - a backup left in sites-enabled would be loaded as a second server block)"
 
   # Inserted immediately after the root line, which is inside the right server
   # block by definition. Hunting for the block's closing brace with sed is the
