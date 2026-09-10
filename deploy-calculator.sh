@@ -187,12 +187,18 @@ ok "$CONF"
 if grep -q "$MARKER" "$CONF"; then
   note "the protected block is already in there - leaving the config alone"
 else
+  # A vhost normally has TWO server blocks serving the same root - one on port
+  # 80 and one on 443 - so "exactly one root line" was the wrong expectation.
+  # Put the protected location in EVERY block that serves this root. A request
+  # can arrive at either listener, and protecting only one of them is a lock on
+  # the front door with the back door open.
   ROOTS=$(grep -cE "^[[:space:]]*root[[:space:]]+${SITE}/?[[:space:]]*;" "$CONF")
-  if [ "$ROOTS" -ne 1 ]; then
-    echo "    Expected one 'root $SITE;' line in that file, found $ROOTS."
-    echo "    Stopping rather than editing the wrong server block."
+  if [ "$ROOTS" -lt 1 ]; then
+    echo "    Found no 'root $SITE;' line in that file. Send me:"
+    echo "      sudo grep -n 'root\\|listen\\|server_name' $CONF"
     exit 1
   fi
+  note "$ROOTS server block(s) in that file serve this site - protecting all of them"
   # The backup does NOT go next to the config. nginx.conf normally does
   # `include /etc/nginx/sites-enabled/*;` - a wildcard with no extension filter -
   # so a file called foothills.before-preview-... sitting in that directory gets
@@ -210,7 +216,7 @@ else
   # fragile way to do this.
   awk -v marker="$MARKER" -v site="$SITE" '
     { print }
-    !done && $0 ~ ("^[ \t]*root[ \t]+" site "/?[ \t]*;") {
+    $0 ~ ("^[ \t]*root[ \t]+" site "/?[ \t]*;") {
       print ""
       print "    " marker " - preview pages, password protected. Remove this block to unpublish."
       print "    location ^~ /preview/ {"
@@ -219,9 +225,11 @@ else
       print "        add_header X-Robots-Tag \"noindex, nofollow\" always;"
       print "        try_files $uri $uri/ =404;"
       print "    }"
-      done = 1
     }
   ' "$CBK" > "$TMP/newconf" || exit 1
+
+  N=$(grep -cF "location ^~ /preview/" "$TMP/newconf")
+  [ "$N" -eq "$ROOTS" ] || { echo "    Expected $ROOTS blocks, wrote $N. Not applying."; exit 1; }
 
   cp "$TMP/newconf" "$CONF" || exit 1
 
