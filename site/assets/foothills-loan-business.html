@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foothills Livestock Co-op — Business Loan Application</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f1e8;
+  --panel: #fffaf3;
+  --ink: #1e1f1b;
+  --muted: #635f54;
+  --brand: #6b3f1f;
+  --brand-2: #8c5b31;
+  --accent: #c89a52;
+  --accent-light: rgba(200,154,82,.12);
+  --forest: #314233;
+  --forest-light: rgba(49,66,51,.08);
+  --line: rgba(37,31,23,.12);
+  --danger: #b5432a;
+  --white: #ffffff;
+  --shadow: 0 8px 32px rgba(25,20,14,.10);
+  --shadow-lg: 0 16px 48px rgba(25,20,14,.14);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --max: 880px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at top right, rgba(200,154,82,.15), transparent 28%),
+              linear-gradient(180deg, #efe6d8 0%, #f8f4ed 32%, var(--bg) 100%);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Toolbar ─────────────────────────── */
+.toolbar {
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: saturate(180%) blur(16px);
+  background: rgba(248,244,237,.88);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+.toolbar-inner {
+  width: min(calc(100% - 32px), var(--max));
+  margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.toolbar-left { display: flex; align-items: center; gap: 12px; }
+.toolbar-logo { height: 42px; width: auto; }
+.toolbar-title { font-weight: 700; font-size: .95rem; color: var(--brand); }
+.toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 999px; border: none;
+  font: 600 .88rem/1 inherit; cursor: pointer; transition: all .22s ease;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff; box-shadow: 0 6px 16px rgba(107,63,31,.22);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(107,63,31,.30); }
+.btn-secondary {
+  background: rgba(255,255,255,.70); color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn-secondary:hover { background: #fff; transform: translateY(-1px); }
+.btn-save {
+  background: linear-gradient(135deg, var(--forest), #3d5440);
+  color: #fff; box-shadow: 0 6px 16px rgba(49,66,51,.22);
+}
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(49,66,51,.30); }
+.btn-submit {
+  background: linear-gradient(135deg, #c89a52, #d4a853);
+  color: #1e1f1b; box-shadow: 0 6px 16px rgba(200,154,82,.28);
+  font-weight: 700;
+}
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(200,154,82,.38); }
+.submit-overlay {
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(30,31,27,.6); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center;
+}
+.submit-overlay.show { display:flex; }
+.submit-box {
+  background:#fff; border-radius:16px; padding:32px; max-width:420px; width:90%;
+  box-shadow:0 24px 60px rgba(14,14,12,.25); text-align:center;
+}
+.submit-box h3 { margin:0 0 8px; color:var(--forest); font-size:1.15rem; }
+.submit-box p { margin:0 0 20px; color:var(--muted); font-size:.92rem; line-height:1.6; }
+.submit-box .spinner { width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--accent);
+  border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.submit-box .btn { margin:4px; }
+.btn svg { width: 16px; height: 16px; }
+
+/* ── Page container ──────────────────── */
+.page {
+  width: min(calc(100% - 24px), var(--max));
+  margin: 28px auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid rgba(37,31,23,.06);
+}
+.page + .page { margin-top: 24px; }
+
+/* ── Header ──────────────────────────── */
+.page-header {
+  background: #ffffff;
+  color: var(--ink);
+  padding: 28px 32px 22px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 3px solid var(--forest);
+}
+.page-header::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 100%, rgba(49,66,51,.04), transparent 60%);
+  pointer-events: none;
+}
+.page-header * { position: relative; z-index: 1; }
+.header-logo { height: 80px; width: auto; margin: 0 auto 14px; display: block; }
+.page-header h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: .03em; margin-bottom: 4px; color: var(--forest); }
+.page-header .subtitle { font-size: .82rem; color: var(--brand); font-weight: 600; margin-bottom: 8px; }
+.page-header .contact-info {
+  font-size: .78rem; color: var(--muted); line-height: 1.6;
+}
+.page-header .contact-info a { color: var(--brand); text-decoration: none; }
+.page-badge {
+  display: inline-block;
+  background: var(--forest);
+  color: #fff;
+  font-weight: 700; font-size: .7rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-top: 10px;
+  letter-spacing: .5px;
+}
+
+/* ── Body ────────────────────────────── */
+.page-body { padding: 28px 32px 32px; }
+
+/* ── Notice ──────────────────────────── */
+.notice {
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, rgba(200,154,82,.12), rgba(200,154,82,.06));
+  border: 1px solid rgba(200,154,82,.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 600;
+  color: var(--brand);
+  margin-bottom: 24px;
+}
+.notice svg { width: 20px; height: 20px; flex-shrink: 0; color: var(--accent); }
+.notice.required {
+  background: linear-gradient(135deg, rgba(181,67,42,.08), rgba(181,67,42,.03));
+  border-color: rgba(181,67,42,.20);
+  color: var(--danger);
+}
+.notice.required svg { color: var(--danger); }
+
+/* ── Section ─────────────────────────── */
+.section { margin-bottom: 28px; }
+.section:last-child { margin-bottom: 0; }
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--forest);
+}
+.section-num {
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--forest), #3d5440);
+  color: #fff;
+  border-radius: 10px;
+  font-size: .82rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.section-title {
+  font-size: 1rem; font-weight: 700;
+  color: var(--forest);
+  letter-spacing: .01em;
+}
+
+/* ── Form grid ───────────────────────── */
+.row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+.row:last-child { margin-bottom: 0; }
+.col { flex: 1 1 200px; min-width: 0; }
+.col-2 { flex: 2 1 350px; min-width: 0; }
+.col-sm { flex: 0 1 140px; min-width: 120px; }
+.col-xs { flex: 0 1 100px; min-width: 80px; }
+.col-md { flex: 0 1 180px; min-width: 140px; }
+
+/* ── Field ───────────────────────────── */
+.field { display: flex; flex-direction: column; }
+.field label {
+  font-size: .72rem; font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.field input, .field select, .field textarea {
+  border: 1px solid rgba(37,31,23,.15);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: .88rem;
+  font-family: inherit;
+  background: #faf8f5;
+  color: var(--ink);
+  transition: border .2s, box-shadow .2s, background .2s;
+  width: 100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(107,63,31,.10);
+  background: #fff;
+}
+.field input::placeholder { color: rgba(99,95,84,.45); }
+.field textarea { resize: vertical; min-height: 80px; }
+.field select {
+  appearance: none; -webkit-appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23635f54' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 36px;
+}
+
+/* ── Check/radio groups ──────────────── */
+.check-group {
+  display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+  padding-top: 6px;
+}
+.check-group label {
+  font-size: .86rem; font-weight: 500; color: var(--ink);
+  text-transform: none; letter-spacing: 0;
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+}
+.check-group input[type="radio"],
+.check-group input[type="checkbox"] {
+  accent-color: var(--forest);
+  width: 16px; height: 16px; cursor: pointer;
+}
+
+/* ── Applicant card ──────────────────── */
+.applicant-card {
+  background: linear-gradient(135deg, rgba(49,66,51,.04), rgba(49,66,51,.02));
+  border: 1px solid rgba(49,66,51,.12);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.applicant-card:last-child { margin-bottom: 0; }
+.applicant-card-title {
+  font-weight: 700; font-size: .84rem;
+  color: var(--forest);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.applicant-badge {
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--forest); color: #fff;
+  border-radius: 7px; font-size: .72rem; font-weight: 700;
+}
+
+/* ── Type-to-sign signature ────────── */
+.sig-type-wrap { margin-bottom: 16px; }
+.sig-type-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  margin-bottom: 4px;
+}
+.sig-type-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.sig-type-input:focus {
+  outline: none;
+  border-color: var(--brand, #8B6D3F);
+  box-shadow: 0 0 0 2px rgba(139,109,63,0.15);
+}
+.sig-type-preview {
+  min-height: 50px;
+  border-bottom: 2px solid #333;
+  font-family: 'Dancing Script', cursive;
+  font-size: 28px;
+  color: #1a1a1a;
+  padding: 8px 4px 4px;
+  text-align: center;
+}
+@media print {
+  .sig-type-input { display: none !important; }
+  .sig-type-preview { border-bottom: 1px solid #333; min-height: 40px; }
+}
+
+/* ── Financial table ─────────────────── */
+.fin-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.fin-col-header {
+  font-size: .82rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  margin-bottom: 12px;
+}
+.fin-col-header.assets { background: rgba(49,66,51,.08); color: var(--forest); }
+.fin-col-header.liabilities { background: rgba(181,67,42,.08); color: var(--danger); }
+.fin-col-header.income { background: var(--accent-light); color: var(--brand); }
+
+/* ── Net worth table ─────────────────── */
+.nw-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.nw-table th {
+  background: linear-gradient(135deg, var(--forest), #3d5440);
+  color: #fff;
+  font-size: .7rem; text-transform: uppercase; letter-spacing: .4px;
+  padding: 8px 10px; text-align: left;
+}
+.nw-table th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+.nw-table th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+.nw-table td {
+  padding: 4px 4px;
+  border-bottom: 1px solid rgba(37,31,23,.06);
+}
+.nw-table td input {
+  width: 100%;
+  border: 1px solid rgba(37,31,23,.12);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: .82rem;
+  font-family: inherit;
+  background: #faf8f5;
+  transition: border .2s, box-shadow .2s;
+}
+.nw-table td input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(107,63,31,.10);
+  background: #fff;
+}
+.nw-table tr:nth-child(even) td { background: rgba(246,241,232,.5); }
+.nw-total td {
+  background: rgba(49,66,51,.06) !important;
+  font-weight: 700;
+  border-top: 2px solid var(--forest);
+}
+
+/* ── Office use box ──────────────────── */
+.office-box {
+  background: #f5f3f0;
+  border: 2px dashed rgba(99,95,84,.25);
+  border-radius: var(--radius-sm);
+  padding: 22px;
+}
+.office-box .section-header { border-color: #999; }
+.office-box .section-num { background: #888; }
+.office-box .section-title { color: #666; }
+.office-label { font-size: .78rem; font-weight: 600; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+
+/* ── Auth text ───────────────────────── */
+.auth-text {
+  font-size: .84rem; line-height: 1.65;
+  color: var(--muted);
+  padding: 14px 18px;
+  background: var(--forest-light);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--forest);
+  margin-bottom: 20px;
+}
+
+/* ── Farming ops grid ────────────────── */
+.farm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.farm-grid.two { grid-template-columns: 1fr 1fr; }
+.farm-grid.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+/* ── Page footer ─────────────────────── */
+.page-footer {
+  text-align: center;
+  font-size: .72rem; color: var(--muted);
+  padding: 12px 20px;
+  border-top: 1px solid rgba(37,31,23,.08);
+  background: #faf8f5;
+}
+
+/* ── Print ────────────────────────────── */
+@media print {
+  @page { margin: 9mm 11mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: #fff !important; font-size: 11px; }
+  .toolbar, .submit-overlay, .page-footer { display: none !important; }
+
+  /* Continuous flow — sections no longer forced onto separate sheets; no card chrome */
+  .page { width: 100%; margin: 0; border: none; border-radius: 0; box-shadow: none; page-break-after: auto; overflow: visible; }
+  .page + .page { margin-top: 0; }
+
+  /* Header: first page only (repeats already hidden), compact */
+  .page ~ .page .page-header { display: none !important; }
+  .page-header { padding: 8px 16px; border-bottom-width: 2px; }
+  .header-logo { height: 44px; margin-bottom: 5px; }
+  .page-header h1 { font-size: 1rem; margin-bottom: 2px; }
+  .page-header .subtitle { font-size: .72rem; margin-bottom: 3px; }
+  .page-header .contact-info { font-size: .68rem; line-height: 1.35; }
+  .page-badge { display: none; }
+
+  /* Tighten body + sections */
+  .page-body { padding: 10px 18px 12px; }
+  .notice { margin-bottom: 8px; padding: 6px 10px; font-size: .74rem; }
+  .section { margin-bottom: 10px; }
+  .section-header { margin-bottom: 7px; padding-bottom: 4px; page-break-after: avoid; }
+  .section-num { width: 20px; height: 20px; border-radius: 6px; font-size: .68rem; }
+  .section-title { font-size: .84rem; }
+
+  /* Fields — keep each field/row intact across page breaks */
+  .row { gap: 8px; margin-bottom: 6px; page-break-inside: avoid; }
+  .field { page-break-inside: avoid; }
+  .field label { font-size: .62rem; margin-bottom: 1px; }
+  .field input, .field select, .field textarea { padding: 3px 7px; font-size: .76rem; border-color: #999; background: #fff; border-radius: 4px; }
+  .field textarea { min-height: 52px; }
+  .check-group { padding-top: 2px; gap: 12px; }
+  .check-group label { font-size: .76rem; }
+
+  /* Cards / boxes */
+  .applicant-card { padding: 8px 12px; margin-bottom: 8px; }
+  .applicant-card-title { margin-bottom: 8px; font-size: .78rem; page-break-after: avoid; }
+  .office-box { padding: 10px 12px; }
+  .auth-text { padding: 8px 12px; margin-bottom: 10px; font-size: .72rem; line-height: 1.4; }
+  .farm-grid { gap: 8px; margin-bottom: 8px; }
+
+  /* Financial / net-worth tables */
+  .fin-columns { gap: 12px; }
+  .fin-col-header { padding: 4px 8px; margin-bottom: 6px; }
+  .nw-table th { padding: 4px 6px; }
+  .nw-table td { padding: 1px 3px; }
+  .nw-table td input { padding: 2px 5px; font-size: .74rem; border-color: #999; background: #fff; }
+
+  /* Signature */
+  .sig-type-input { display: none !important; }
+  .sig-type-preview { min-height: 34px; }
+}
+
+/* ── Responsive ──────────────────────── */
+@media (max-width: 640px) {
+  .page-body { padding: 18px 16px; }
+  .page-header { padding: 20px 16px; }
+  .row { gap: 10px; }
+  .col, .col-2, .col-sm, .col-xs, .col-md { flex: 1 1 100%; }
+  .fin-columns { grid-template-columns: 1fr; }
+  .farm-grid, .farm-grid.two, .farm-grid.four { grid-template-columns: 1fr; }
+  .toolbar-title { display: none; }
+  .applicant-card { padding: 14px; }
+  .office-box { padding: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="toolbar no-print">
+  <div class="toolbar-inner">
+    <div class="toolbar-left">
+      <img class="toolbar-logo" src="https://foothills.cloud360.ca/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op">
+      <span class="toolbar-title">Business Loan Application</span>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn btn-secondary" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Save PDF
+      </button>
+      <button class="btn btn-save" onclick="saveThisFile('Foothills_Livestock_Loan_Application_Business.html')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Save this File
+      </button>
+      <button class="btn btn-submit" onclick="submitToFoothills()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit to Foothills
+      </button>
+      <button class="btn btn-primary" onclick="resetForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Clear Form
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page1">
+  <div class="page-header">
+    <img class="header-logo" src="https://foothills.cloud360.ca/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op">
+    <h1>Foothills Livestock Co-op</h1>
+    <div class="subtitle">LOAN APPLICATION — BUSINESS</div>
+    <div class="contact-info">
+      Box 725, Rocky Mountain House, AB T4T 1A5<br>
+      Ph: 403-845-6669 &nbsp;|&nbsp; Toll Free: 1-866-848-6669 &nbsp;|&nbsp; Fax: 403-845-4115<br>
+      Email: frontdesk@foothillslivestock.ca
+    </div>
+    <div class="page-badge">PAGE 1 OF 4</div>
+  </div>
+  <div class="page-body">
+    <div class="notice required">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      You must include a photocopy of I.D. with signature
+    </div>
+<div class="notice required"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>The FCC Producer Consent form must be completed and returned with this application.</strong> Your application cannot be processed without it. <a href="/assets/fcc-producer-consent.pdf?v=2" download style="color:inherit;font-weight:700">Download the consent form</a>, or ask the office to send you one.</span></div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">1</span><span class="section-title">Company Information</span></div>
+      <div class="row"><div class="col-2 field"><label>Legal Business Name</label><input type="text"></div></div>
+      <div class="row"><div class="col-2 field"><label>Mailing Address</label><input type="text"></div></div>
+      <div class="row">
+        <div class="col field"><label>Town / City</label><input type="text"></div>
+        <div class="col-sm field"><label>Province</label><select><option value="">--</option><option>AB</option><option>BC</option><option>SK</option><option>MB</option><option>ON</option><option>QC</option><option>NB</option><option>NS</option><option>PE</option><option>NL</option><option>NT</option><option>NU</option><option>YT</option></select></div>
+        <div class="col-sm field"><label>Postal Code</label><input type="text" maxlength="7" placeholder="T0A 0A0"></div>
+      </div>
+      <div class="row"><div class="col-2 field"><label>Email Address</label><input type="email"></div></div>
+      <div class="row">
+        <div class="col field"><label>Home #</label><input type="tel"></div>
+        <div class="col field"><label>Cell #</label><input type="tel"></div>
+        <div class="col field"><label>Fax #</label><input type="tel"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">2</span><span class="section-title">Company Representatives</span></div>
+      <div class="applicant-card">
+        <div class="applicant-card-title"><span class="applicant-badge">1</span> Representative 1</div>
+        <div class="row">
+          <div class="col field"><label>Legal Surname</label><input type="text"></div>
+          <div class="col field"><label>Given Name</label><input type="text"></div>
+          <div class="col-xs field"><label>Middle</label><input type="text"></div>
+          <div class="col-sm field"><label>Birth Date</label><input type="date"></div>
+        </div>
+        <div class="row">
+          <div class="col field"><label>Drivers Licence Number</label><input type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col field"><label>Email Address</label><input type="email"></div>
+          <div class="col field"><label>Contact Number</label><input type="tel"></div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line);">
+          <div class="sig-type-wrap">
+            <div class="sig-type-label">REPRESENTATIVE #1 SIGNATURE - TYPE</div>
+            <input type="text" class="sig-type-input" id="sigInput1" name="signature_rep_1" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview1')">
+            <div class="sig-type-preview" id="sigPreview1"></div>
+          </div>
+        </div>
+      </div>
+      <div class="applicant-card">
+        <div class="applicant-card-title"><span class="applicant-badge">2</span> Representative 2</div>
+        <div class="row">
+          <div class="col field"><label>Legal Surname</label><input type="text"></div>
+          <div class="col field"><label>Given Name</label><input type="text"></div>
+          <div class="col-xs field"><label>Middle</label><input type="text"></div>
+          <div class="col-sm field"><label>Birth Date</label><input type="date"></div>
+        </div>
+        <div class="row">
+          <div class="col field"><label>Drivers Licence Number</label><input type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col field"><label>Email Address</label><input type="email"></div>
+          <div class="col field"><label>Contact Number</label><input type="tel"></div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line);">
+          <div class="sig-type-wrap">
+            <div class="sig-type-label">REPRESENTATIVE #2 SIGNATURE - TYPE</div>
+            <input type="text" class="sig-type-input" id="sigInput2" name="signature_rep_2" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview2')">
+            <div class="sig-type-preview" id="sigPreview2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="applicant-card">
+        <div class="applicant-card-title"><span class="applicant-badge">3</span> Representative 3</div>
+        <div class="row">
+          <div class="col field"><label>Legal Surname</label><input type="text"></div>
+          <div class="col field"><label>Given Name</label><input type="text"></div>
+          <div class="col-xs field"><label>Middle</label><input type="text"></div>
+          <div class="col-sm field"><label>Birth Date</label><input type="date"></div>
+        </div>
+        <div class="row">
+          <div class="col field"><label>Drivers Licence Number</label><input type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col field"><label>Email Address</label><input type="email"></div>
+          <div class="col field"><label>Contact Number</label><input type="tel"></div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--line);">
+          <div class="sig-type-wrap">
+            <div class="sig-type-label">REPRESENTATIVE #3 SIGNATURE - TYPE</div>
+            <input type="text" class="sig-type-input" id="sigInput3" name="signature_rep_3" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview3')">
+            <div class="sig-type-preview" id="sigPreview3"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <div class="col-sm field"><label>Date</label><input type="date"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">3</span><span class="section-title">Financials</span></div>
+      <div class="row" style="margin-bottom:16px;"><div class="col-sm field"><label>As of Date</label><input type="date"></div></div>
+      <div class="fin-columns">
+        <div>
+          <div class="fin-col-header assets">Assets</div>
+          <div class="field" style="margin-bottom:10px;"><label>Total Current Assets</label><input type="text" placeholder="$"></div>
+          <div class="field" style="margin-bottom:10px;"><label>Total Term Assets</label><input type="text" placeholder="$"></div>
+          <div class="field"><label>Total Assets</label><input type="text" placeholder="$" style="font-weight:700;border-color:var(--forest);"></div>
+        </div>
+        <div>
+          <div class="fin-col-header liabilities">Liabilities</div>
+          <div class="field" style="margin-bottom:10px;"><label>Total Current Liabilities</label><input type="text" placeholder="$"></div>
+          <div class="field" style="margin-bottom:10px;"><label>Total Term Liabilities</label><input type="text" placeholder="$"></div>
+          <div class="field"><label>Total Liabilities</label><input type="text" placeholder="$" style="font-weight:700;border-color:var(--danger);"></div>
+        </div>
+      </div>
+      <div style="margin-top:18px;">
+        <div class="fin-col-header income">Income</div>
+        <div class="row">
+          <div class="col field"><label>Total Revenue</label><input type="text" placeholder="$"></div>
+          <div class="col field"><label>Farm Income</label><input type="text" placeholder="$"></div>
+          <div class="col field"><label>Other Income</label><input type="text" placeholder="$"></div>
+          <div class="col field"><label>Total</label><input type="text" placeholder="$" style="font-weight:700;border-color:var(--accent);"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">4</span><span class="section-title">Loan Details</span></div>
+      <div class="notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        I/We hereby apply to Foothills Livestock Co-op for a loan to purchase cattle as follows:
+      </div>
+      <div class="row"><div class="col-2 field"><label>Loan Purpose</label><input type="text"></div></div>
+      <div class="row">
+        <div class="col field"><label>Cattle as Follows — Breeder</label><input type="text"></div>
+        <div class="col field"><label>Cattle as Follows — Feeder</label><input type="text"></div>
+      </div>
+      <div class="row" style="align-items:center;">
+        <div class="col field"><label>Interest Rate</label><div class="check-group"><label><input type="radio" name="int_rate" value="variable"> Variable</label><label><input type="radio" name="int_rate" value="fixed"> Fixed</label></div></div>
+        <div class="col-sm field"><label>Rate (%)</label><input type="text" placeholder="%"></div>
+        <div class="col field"><label>Credit Amount Requested</label><input type="text" placeholder="$" style="font-weight:700;font-size:1rem;border-color:var(--accent);"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Foothills Livestock Co-op &middot; Business Loan Application (Page 1 of 4)</div>
+</div>
+
+<div class="page" id="page2">
+  <div class="page-header">
+    <img class="header-logo" src="https://foothills.cloud360.ca/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op">
+    <h1>Foothills Livestock Co-op</h1>
+    <div class="subtitle">LOAN APPLICATION — BUSINESS — PAGE 2</div>
+    <div class="contact-info">
+      Box 725, Rocky Mountain House, AB T4T 1A5<br>
+      Ph: 403-845-6669 &nbsp;|&nbsp; Toll Free: 1-866-848-6669 &nbsp;|&nbsp; Fax: 403-845-4115<br>
+      Email: frontdesk@foothillslivestock.ca
+    </div>
+    <div class="page-badge">PAGE 2 OF 4</div>
+  </div>
+  <div class="page-body">
+    <div class="section">
+      <div class="section-header"><span class="section-num">5</span><span class="section-title">Plan of Action</span></div>
+      <div class="row"><div class="col-2 field"><label>Legal Business Name</label><input type="text"></div></div>
+      <div class="row"><div class="col-2 field"><label>Description of Proposed Plan of Action</label><textarea rows="6"></textarea></div></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">6</span><span class="section-title">Location Details</span></div>
+      <div class="notice required">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Must Complete Below
+      </div>
+      <div class="row"><div class="col-2 field"><label>Legal Land Location or Civic Address</label><input type="text"></div></div>
+      <div class="row"><div class="col-2 field"><label>Directions from the Nearest Town</label><textarea rows="3"></textarea></div></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">7</span><span class="section-title">Authorization</span></div>
+      <div class="auth-text">
+        I am making this application for Loan(s) to Foothills Livestock Co-Op. If my Application is accepted I will be required to complete a Loan Agreement, Security Agreement, Promissory Note and to provide other documents and information to obtain the Loan(s).<br><br>
+        FLC may disclose the particulars of my Loan(s) to others for the purpose connected with my Loan(s). I authorize and consent to the receipt and exchange of credit information about me from time to time, including the exchange and sharing of credit information with any credit reporting agency, credit bureau or person with whom I may have financial relations. I further authorize my creditors or any other person to provide FLC with any information about my financial affairs which they may require.<br><br>
+        I certify that all information I have provided in this application is accurate and is a true representation of my financial position.
+      </div>
+      <div class="applicant-card">
+        <div class="row">
+          <div class="col-2">
+            <div class="sig-type-wrap">
+              <div class="sig-type-label">SIGNATURE OF APPLICANT #1 - TYPE</div>
+              <input type="text" class="sig-type-input" id="sigInput4" name="signature_auth_1" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview4')">
+              <div class="sig-type-preview" id="sigPreview4"></div>
+            </div>
+          </div>
+          <div class="col field"><label>Printed Name of Applicant #1</label><input type="text"></div>
+          <div class="col-sm field"><label>Date</label><input type="date"></div>
+        </div>
+      </div>
+      <div class="applicant-card">
+        <div class="row">
+          <div class="col-2">
+            <div class="sig-type-wrap">
+              <div class="sig-type-label">SIGNATURE OF APPLICANT #2 - TYPE</div>
+              <input type="text" class="sig-type-input" id="sigInput5" name="signature_auth_2" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview5')">
+              <div class="sig-type-preview" id="sigPreview5"></div>
+            </div>
+          </div>
+          <div class="col field"><label>Printed Name of Applicant #2</label><input type="text"></div>
+          <div class="col-sm field"><label>Date</label><input type="date"></div>
+        </div>
+      </div>
+      <div class="applicant-card">
+        <div class="row">
+          <div class="col-2">
+            <div class="sig-type-wrap">
+              <div class="sig-type-label">SIGNATURE OF APPLICANT #3 - TYPE</div>
+              <input type="text" class="sig-type-input" id="sigInput6" name="signature_auth_3" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview6')">
+              <div class="sig-type-preview" id="sigPreview6"></div>
+            </div>
+          </div>
+          <div class="col field"><label>Printed Name of Applicant #3</label><input type="text"></div>
+          <div class="col-sm field"><label>Date</label><input type="date"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="office-box">
+        <div class="section-header"><span class="section-num" style="background:#888;">8</span><span class="section-title" style="color:#666;">For Office Use Only</span></div>
+        <div class="row"><div class="col field"><label>Approved Limit</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Credit Limit Increased To</label><input type="text" placeholder="$"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <hr style="margin:16px 0;border:none;border-top:1px dashed rgba(99,95,84,.3);">
+        <div class="row" style="align-items:center;">
+          <div class="col field"><label>Status</label><div class="check-group"><label><input type="radio" name="status" value="approved"> Approved</label><label><input type="radio" name="status" value="declined"> Declined</label><label><input type="radio" name="status" value="pending"> Pending</label></div></div>
+          <div class="col-sm field"><label>Date</label><input type="date"></div>
+        </div>
+        <div class="row"><div class="col field"><label>Supervisor</label><input type="text"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+        <div class="row"><div class="col field"><label>Director</label><input type="text"></div><div class="col-sm field"><label>Date</label><input type="date"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Foothills Livestock Co-op &middot; Business Loan Application (Page 2 of 4)</div>
+</div>
+
+<div class="page" id="page3">
+  <div class="page-header">
+    <img class="header-logo" src="https://foothills.cloud360.ca/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op">
+    <h1>Foothills Livestock Co-op</h1>
+    <div class="subtitle">FARMING OPERATIONS — APPLICANT #1</div>
+    <div class="contact-info">
+      Box 725, Rocky Mountain House, AB T4T 1A5<br>
+      Ph: 403-845-6669 &nbsp;|&nbsp; Toll Free: 1-866-848-6669 &nbsp;|&nbsp; Fax: 403-845-4115<br>
+      Email: frontdesk@foothillslivestock.ca
+    </div>
+    <div class="page-badge">PAGE 3 OF 4</div>
+  </div>
+  <div class="page-body">
+    <div class="section">
+      <div class="section-header"><span class="section-num">1</span><span class="section-title">Farming Profile</span></div>
+      <div class="row">
+        <div class="col field"><label>Do You Farm Fulltime?</label><div class="check-group"><label><input type="radio" name="bfarm1" value="yes"> Yes</label><label><input type="radio" name="bfarm1" value="no"> No</label></div></div>
+        <div class="col field"><label>How Long Farming</label><input type="text" placeholder="years"></div>
+        <div class="col-2 field"><label>Legal Land Description of Home Quarter</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Lived There How Long</label><input type="text" placeholder="years"></div>
+        
+        <div class="col field"><label>Year Total (bushels)</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Number of Acres Farmed</label><input type="text"></div>
+        <div class="col field"><label>Province Livestock Kept In</label><select><option value="">--</option><option>AB</option><option>BC</option><option>SK</option><option>MB</option><option>ON</option><option>QC</option><option>NB</option><option>NS</option><option>PE</option><option>NL</option><option>NT</option><option>NU</option><option>YT</option></select></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">2</span><span class="section-title">Land &amp; Livestock</span></div>
+      <div class="row">
+        <div class="col-sm field"><label>Full Owned</label><input type="text"></div>
+        <div class="col-sm field"><label>Cult. Owned</label><input type="text"></div>
+        <div class="col-sm field"><label>Total Rented</label><input type="text"></div>
+        <div class="col-sm field"><label>Cult. Rented</label><input type="text"></div>
+        
+        
+      </div>
+      <div class="row">
+        <div class="col field"><label>Breeding Livestock on Hand — # Owned</label><input type="text"></div>
+        <div class="col field"><label>Tons of Silage on Hand</label><input type="text"></div>
+        <div class="col field"><label>Round Straw Bales on Hand</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Feeder Livestock on Hand — # Owned</label><input type="text"></div>
+        <div class="col field"><label>Round Forage Bales on Hand</label><input type="text"></div>
+        <div class="col field"><label>Bushels of Grain on Hand</label><input type="text"></div>
+      </div>
+
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">3</span><span class="section-title">Income</span></div>
+      <div class="row">
+        <div class="col field"><label>Gross Farm Income Last Year</label><input type="text" placeholder="$"></div>
+        <div class="col field"><label>Net Farm Income Last Year</label><input type="text" placeholder="$"></div>
+        <div class="col-sm field"><label>Fiscal Year End</label><input type="date"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Gross Off-Farm Income</label><input type="text" placeholder="$"></div>
+        <div class="col field"><label>Net Off-Farm Income</label><input type="text" placeholder="$"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">4</span><span class="section-title">Net Worth Statement</span></div>
+      <div class="fin-columns">
+        <div>
+          <div class="fin-col-header assets">Assets</div>
+          <table class="nw-table"><thead><tr><th style="width:55%;">Item</th><th>Qty / # Head</th><th>Value ($)</th></tr></thead><tbody>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Cash on Hand</td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Accounts Receivable</td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Savings, Investments, etc. <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Feed &amp; Supplies <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Grain on Hand <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Market Livestock <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Breeding Stock <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Equipment (listed) <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Land Owned (incl. buildings)</td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Other Assets (describe)</td><td><input type="text" placeholder="describe"></td><td><input type="text" placeholder="$"></td></tr>
+            
+            <tr class="nw-total"><td style="font-size:.85rem;padding:8px;" colspan="2"><strong>TOTAL ASSETS</strong></td><td><input type="text" placeholder="$" style="font-weight:700;"></td></tr>
+          </tbody></table>
+        </div>
+        <div>
+          <div class="fin-col-header liabilities">Liabilities</div>
+          <table class="nw-table"><thead><tr><th style="width:45%;">Item</th><th>Owed To</th><th>Payments</th><th>Balance ($)</th></tr></thead><tbody>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Accounts Payable</td><td></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Operating Loans &amp; Credit Cards <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Livestock Loans / Feeder Assn. <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Equipment Loans <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Mortgage Loans <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Other Loans (describe) <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Other Loans (describe) <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            
+            <tr class="nw-total"><td style="font-size:.85rem;padding:8px;" colspan="3"><strong>TOTAL LIABILITIES</strong></td><td><input type="text" placeholder="$" style="font-weight:700;"></td></tr>
+          </tbody></table>
+          <div style="margin-top:12px;padding:12px 14px;background:rgba(49,66,51,.06);border-radius:var(--radius-sm);border:1px solid rgba(49,66,51,.12);">
+            <div class="row"><div class="col-2 field"><label style="color:var(--forest);font-size:.78rem;">NET WORTH (Total Assets - Total Liabilities)</label><input type="text" placeholder="$" style="font-weight:700;font-size:1rem;border-color:var(--forest);"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-text" style="margin-top:18px;">I certify that all information about me in this Net Worth Statement is an accurate and true representation of my financial position.</div>
+      <div style="margin-top:8px;">
+        <div class="row">
+          <div class="col-2">
+            <div class="sig-type-wrap">
+              <div class="sig-type-label">APPLICANT #1 SIGNATURE - TYPE</div>
+              <input type="text" class="sig-type-input" id="sigInput7" name="signature_nw_1" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview7')">
+              <div class="sig-type-preview" id="sigPreview7"></div>
+            </div>
+          </div>
+          <div class="col-sm field"><label>Date</label><input type="date"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">5</span><span class="section-title">Bank Credit References</span></div>
+      <div class="row">
+        <div class="col field"><label>Financial Institution</label><input type="text"></div>
+        <div class="col-sm field"><label>Years with Bank</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Address</label><input type="text"></div>
+        <div class="col field"><label>Telephone Number</label><input type="tel"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Foothills Livestock Co-op &middot; Farming Operations — Applicant #1 (Page 3 of 4)</div>
+</div>
+<div class="page" id="page4">
+  <div class="page-header">
+    <img class="header-logo" src="https://foothills.cloud360.ca/assets/foothills-logo.png?v=5" alt="Foothills Livestock Co-op">
+    <h1>Foothills Livestock Co-op</h1>
+    <div class="subtitle">FARMING OPERATIONS — APPLICANT #2</div>
+    <div class="contact-info">
+      Box 725, Rocky Mountain House, AB T4T 1A5<br>
+      Ph: 403-845-6669 &nbsp;|&nbsp; Toll Free: 1-866-848-6669 &nbsp;|&nbsp; Fax: 403-845-4115<br>
+      Email: frontdesk@foothillslivestock.ca
+    </div>
+    <div class="page-badge">PAGE 4 OF 4</div>
+  </div>
+  <div class="page-body">
+    <div class="section">
+      <div class="section-header"><span class="section-num">1</span><span class="section-title">Farming Profile</span></div>
+      <div class="row">
+        <div class="col field"><label>Do You Farm Fulltime?</label><div class="check-group"><label><input type="radio" name="bfarm2" value="yes"> Yes</label><label><input type="radio" name="bfarm2" value="no"> No</label></div></div>
+        <div class="col field"><label>How Long Farming</label><input type="text" placeholder="years"></div>
+        <div class="col-2 field"><label>Legal Land Description of Home Quarter</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Lived There How Long</label><input type="text" placeholder="years"></div>
+        
+        <div class="col field"><label>Year Total (bushels)</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Number of Acres Farmed</label><input type="text"></div>
+        <div class="col field"><label>Province Livestock Kept In</label><select><option value="">--</option><option>AB</option><option>BC</option><option>SK</option><option>MB</option><option>ON</option><option>QC</option><option>NB</option><option>NS</option><option>PE</option><option>NL</option><option>NT</option><option>NU</option><option>YT</option></select></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">2</span><span class="section-title">Land &amp; Livestock</span></div>
+      <div class="row">
+        <div class="col-sm field"><label>Full Owned</label><input type="text"></div>
+        <div class="col-sm field"><label>Cult. Owned</label><input type="text"></div>
+        <div class="col-sm field"><label>Total Rented</label><input type="text"></div>
+        <div class="col-sm field"><label>Cult. Rented</label><input type="text"></div>
+        
+        
+      </div>
+      <div class="row">
+        <div class="col field"><label>Breeding Livestock on Hand — # Owned</label><input type="text"></div>
+        <div class="col field"><label>Tons of Silage on Hand</label><input type="text"></div>
+        <div class="col field"><label>Round Straw Bales on Hand</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Feeder Livestock on Hand — # Owned</label><input type="text"></div>
+        <div class="col field"><label>Round Forage Bales on Hand</label><input type="text"></div>
+        <div class="col field"><label>Bushels of Grain on Hand</label><input type="text"></div>
+      </div>
+
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">3</span><span class="section-title">Income</span></div>
+      <div class="row">
+        <div class="col field"><label>Gross Farm Income Last Year</label><input type="text" placeholder="$"></div>
+        <div class="col field"><label>Net Farm Income Last Year</label><input type="text" placeholder="$"></div>
+        <div class="col-sm field"><label>Fiscal Year End</label><input type="date"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Gross Off-Farm Income</label><input type="text" placeholder="$"></div>
+        <div class="col field"><label>Net Off-Farm Income</label><input type="text" placeholder="$"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">4</span><span class="section-title">Net Worth Statement</span></div>
+      <div class="fin-columns">
+        <div>
+          <div class="fin-col-header assets">Assets</div>
+          <table class="nw-table"><thead><tr><th style="width:55%;">Item</th><th>Qty / # Head</th><th>Value ($)</th></tr></thead><tbody>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Cash on Hand</td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Accounts Receivable</td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Savings, Investments, etc. <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Feed &amp; Supplies <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Grain on Hand <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Market Livestock <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Breeding Stock <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Equipment (listed) <button type="button" onclick="addRowBelow(this,3)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Land Owned (incl. buildings)</td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Other Assets (describe)</td><td><input type="text" placeholder="describe"></td><td><input type="text" placeholder="$"></td></tr>
+            
+            <tr class="nw-total"><td style="font-size:.85rem;padding:8px;" colspan="2"><strong>TOTAL ASSETS</strong></td><td><input type="text" placeholder="$" style="font-weight:700;"></td></tr>
+          </tbody></table>
+        </div>
+        <div>
+          <div class="fin-col-header liabilities">Liabilities</div>
+          <table class="nw-table"><thead><tr><th style="width:45%;">Item</th><th>Owed To</th><th>Payments</th><th>Balance ($)</th></tr></thead><tbody>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Accounts Payable</td><td></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Operating Loans &amp; Credit Cards <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td></td><td></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Livestock Loans / Feeder Assn. <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Equipment Loans <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Mortgage Loans <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Other Loans (describe) <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            <tr><td style="font-size:.82rem;padding:6px 8px;">Other Loans (describe) <button type="button" onclick="addRowBelow(this,4)" style="background:none;border:none;color:#b5432a;font-size:1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle" title="Add another row">+</button></td><td><input type="text"></td><td><input type="text" placeholder="$"></td><td><input type="text" placeholder="$"></td></tr>
+            
+            <tr class="nw-total"><td style="font-size:.85rem;padding:8px;" colspan="3"><strong>TOTAL LIABILITIES</strong></td><td><input type="text" placeholder="$" style="font-weight:700;"></td></tr>
+          </tbody></table>
+          <div style="margin-top:12px;padding:12px 14px;background:rgba(49,66,51,.06);border-radius:var(--radius-sm);border:1px solid rgba(49,66,51,.12);">
+            <div class="row"><div class="col-2 field"><label style="color:var(--forest);font-size:.78rem;">NET WORTH (Total Assets - Total Liabilities)</label><input type="text" placeholder="$" style="font-weight:700;font-size:1rem;border-color:var(--forest);"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-text" style="margin-top:18px;">I certify that all information about me in this Net Worth Statement is an accurate and true representation of my financial position.</div>
+      <div style="margin-top:8px;">
+        <div class="row">
+          <div class="col-2">
+            <div class="sig-type-wrap">
+              <div class="sig-type-label">APPLICANT #2 SIGNATURE - TYPE</div>
+              <input type="text" class="sig-type-input" id="sigInput8" name="signature_nw_2" placeholder="Type your full name" oninput="updateSigPreview(this, 'sigPreview8')">
+              <div class="sig-type-preview" id="sigPreview8"></div>
+            </div>
+          </div>
+          <div class="col-sm field"><label>Date</label><input type="date"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-num">5</span><span class="section-title">Bank Credit References</span></div>
+      <div class="row">
+        <div class="col field"><label>Financial Institution</label><input type="text"></div>
+        <div class="col-sm field"><label>Years with Bank</label><input type="text"></div>
+      </div>
+      <div class="row">
+        <div class="col field"><label>Address</label><input type="text"></div>
+        <div class="col field"><label>Telephone Number</label><input type="tel"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">Foothills Livestock Co-op &middot; Farming Operations — Applicant #2 (Page 4 of 4)</div>
+</div>
+<script>
+var _submitting=false;
+function updateSigPreview(input, previewId) {
+  document.getElementById(previewId).textContent = input.value;
+}
+function persistFormValues(){
+  document.querySelectorAll("input,select,textarea").forEach(function(el){
+    if(el.type==="checkbox"||el.type==="radio"){
+      if(el.checked) el.setAttribute("checked","checked");
+      else el.removeAttribute("checked");
+    } else if(el.tagName==="SELECT"){
+      for(var i=0;i<el.options.length;i++){
+        if(el.options[i].selected) el.options[i].setAttribute("selected","selected");
+        else el.options[i].removeAttribute("selected");
+      }
+    } else if(el.tagName==="TEXTAREA"){
+      el.textContent=el.value;
+    } else {
+      el.setAttribute("value",el.value);
+    }
+  });
+}
+function closeOverlay(){ document.getElementById("submitOverlay").classList.remove("show"); }
+function retrySubmit(){ closeOverlay(); _submitting=false; submitToFoothills(); }
+function showResult(icon,color,title,msg,retry){
+  var box=document.getElementById("submitBox");
+  var h='<div style="font-size:2.5rem;margin-bottom:12px;color:'+color+';">'+icon+'</div><h3>'+title+'</h3><p>'+msg+'</p>';
+  h+='<button class="btn btn-'+(retry?'secondary':'primary')+'" onclick="closeOverlay()">Close</button>';
+  if(retry) h+=' <button class="btn btn-primary" onclick="retrySubmit()">Retry</button>';
+  box.innerHTML=h;
+}
+function addRowBelow(btn,cols){
+  var tr=btn.closest('tr');
+  var clone=tr.cloneNode(true);
+  clone.querySelectorAll('input').forEach(function(inp){inp.value='';});
+  clone.setAttribute('data-added','1');
+  var firstTd=clone.querySelector('td');
+  if(firstTd){
+    var existingRemove=firstTd.querySelector('.remove-row-btn');
+    if(!existingRemove){
+      var rb=document.createElement('button');
+      rb.type='button';
+      rb.className='remove-row-btn';
+      rb.innerHTML='&minus;';
+      rb.title='Remove this row';
+      rb.style.cssText='background:none;border:none;color:#b5432a;font-size:1.1rem;cursor:pointer;padding:0 4px;line-height:1;vertical-align:middle;margin-left:2px;font-weight:bold';
+      rb.onclick=function(){clone.remove();};
+      var plusBtn=firstTd.querySelector('button[onclick*="addRowBelow"]');
+      if(plusBtn) plusBtn.after(rb);
+      else firstTd.appendChild(rb);
+    }
+  }
+  tr.parentNode.insertBefore(clone,tr.nextSibling);
+}
+function submitToFoothills(){
+  if(_submitting) return;
+  _submitting=true;
+  persistFormValues();
+  var sec=document.querySelectorAll('#page1 .section')[0];
+  var txts=sec?sec.querySelectorAll('input[type=text]'):[];
+  var name=(txts[0]?txts[0].value:'').trim()||'Not provided';
+  var mailingAddr=(txts[1]?txts[1].value:'').trim();
+  var town=(txts[2]?txts[2].value:'').trim();
+  var prov=sec?(sec.querySelector('select')||{}).value||'':'';
+  var postal=(txts[3]?txts[3].value:'').trim();
+  var address=[mailingAddr,town,prov,postal].filter(Boolean).join(', ');
+  var tels=sec?sec.querySelectorAll('input[type=tel]'):[];
+  var phone=(tels[0]?tels[0].value:'').trim()||(tels[1]?tels[1].value:'').trim();
+  var emailEl=sec?sec.querySelector('input[type=email]'):null;
+  var email=emailEl?emailEl.value.trim():'';
+  var html2="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+  var overlay=document.getElementById("submitOverlay");
+  var box=document.getElementById("submitBox");
+  box.innerHTML='<div class="spinner"></div><h3>Submitting...</h3><p>Sending your form to Foothills Livestock Co-op</p>';
+  overlay.classList.add("show");
+  var xhr=new XMLHttpRequest();
+  xhr.open("POST","https://foothills.cloud360.ca/api/submit",true);
+  xhr.setRequestHeader("Content-Type","application/json");
+  xhr.timeout=30000;
+  xhr.onload=function(){
+    _submitting=false;
+    try{
+      var d=JSON.parse(xhr.responseText);
+      if(d.success){ showResult("&#10004;","#314233","Submitted Successfully!","Your form has been sent to Foothills Livestock Co-op. They will be contacting you shortly.",false); }
+      else { showResult("&#10008;","#b5432a","Submission Failed",(d.error||"Please try again."),true); }
+    }catch(e){ showResult("&#10008;","#b5432a","Error","Unexpected response from server.",true); }
+  };
+  xhr.onerror=function(){ _submitting=false; showResult("&#10008;","#b5432a","Connection Error","Could not reach the server. Please check your internet and try again.",true); };
+  xhr.ontimeout=function(){ _submitting=false; showResult("&#10008;","#b5432a","Timeout","Server took too long to respond. Please try again.",true); };
+  xhr.send(JSON.stringify({html:html2,form_name:(_divLabel?_divLabel+" ":"")+"Business Loan Application",applicant_name:name,applicant_address:address,applicant_phone:phone,email:email}));
+}
+function saveThisFile(){
+  persistFormValues();
+  var html="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+  var blob=new Blob([html],{type:"text/html"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  var d=new Date();
+  var fn="Foothills_Business_Loan_Application_"+d.getFullYear()+"-"+(""+( d.getMonth()+1)).padStart(2,"0")+"-"+(""+ d.getDate()).padStart(2,"0")+".html";
+  a.download=fn;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+function resetForm(){
+  if(confirm("Clear all form fields? This cannot be undone.")){
+    document.querySelectorAll("input,select,textarea").forEach(function(el){
+      if(el.type==="radio"||el.type==="checkbox") el.checked=false;
+      else el.value="";
+    });
+  }
+}
+
+var _divParam = new URLSearchParams(window.location.search).get('div');
+var _divLabel = _divParam === 'breeders' ? 'Breeders' : _divParam === 'feeders' ? 'Feeders' : '';
+if(_divLabel){
+  document.title = 'Foothills Livestock Co-op — ' + _divLabel + ' Business Loan Application';
+  var tb = document.querySelector('.toolbar-title');
+  if(tb) tb.textContent = _divLabel + ' Business Loan Application';
+  document.querySelectorAll('.subtitle').forEach(function(el){
+    el.textContent = el.textContent.replace('LOAN APPLICATION', _divLabel.toUpperCase() + ' LOAN APPLICATION');
+  });
+  document.querySelectorAll('.page-footer').forEach(function(el){
+    el.innerHTML = el.innerHTML.replace('Business Loan Application', _divLabel + ' Business Loan Application');
+  });
+}
+</script>
+
+<div class="notice required" style="margin-top:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>Before you send this in &mdash; have you completed the FCC Producer Consent form?</strong> It is required with every application, individual or business. <a href="/assets/fcc-producer-consent.pdf?v=2" download style="color:inherit;font-weight:700">Download it here</a> if you have not already.</span></div>
+<div class="submit-overlay" id="submitOverlay">
+  <div class="submit-box" id="submitBox"></div>
+</div>
+<script>
+/* Auto-grow textareas so typed content is fully visible on screen and when printed/saved to PDF */
+(function(){
+  function grow(t){ t.style.height='auto'; t.style.height=t.scrollHeight+'px'; }
+  function growAll(){ document.querySelectorAll('.field textarea').forEach(grow); }
+  document.addEventListener('input', function(e){ if(e.target && e.target.matches && e.target.matches('.field textarea')) grow(e.target); });
+  window.addEventListener('load', growAll);
+  window.addEventListener('beforeprint', growAll);
+})();
+</script>
+<script src="/assets/fh-analytics.js" defer></script>
+</body>
+</html>
