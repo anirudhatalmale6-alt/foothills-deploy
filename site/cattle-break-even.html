@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cattle Break-Even and Market Timing | Foothills Livestock</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Work out your break-even per head from your own costs, see where the Alberta market sits against it, and look at what each month has historically done.">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#f6f1e8; --panel:#fffbf5; --ink:#1e1f1b; --muted:#635f54;
+  --brand:#6b3f1f; --brand-2:#8c5b31; --accent:#c89a52; --accent-light:#e8c882;
+  --forest:#314233; --forest-light:#3d5240; --forest-deep:#1f2d22;
+  --danger:#b5432a; --radius:20px; --max:1200px;
+  --line:#e3dbcd;
+}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;line-height:1.65;font-size:16px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.01em;line-height:1.2}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+
+header{background:var(--forest-deep);color:#f4efe5;padding:14px 0}
+.hbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hbar strong{font-family:Georgia,serif;font-size:1.12rem}
+.hbar .sp{margin-left:auto;font-size:.84rem;opacity:.8}
+
+/* the disclaimer is the most important element on the page and prints */
+.disclaimer{background:#fdf2ee;border:2px solid var(--danger);border-left-width:7px;
+  border-radius:12px;padding:20px 24px;margin:26px 0}
+.disclaimer h2{margin:0 0 8px;font-size:1.13rem;color:var(--danger)}
+.disclaimer p{margin:0 0 8px;font-size:.95rem}
+.disclaimer p:last-child{margin-bottom:0}
+
+.hero{padding:38px 0 8px}
+h1{font-size:clamp(1.9rem,4vw,2.9rem);margin:0 0 10px;color:var(--brand)}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+
+section{padding:30px 0}
+h2{font-size:1.6rem;color:var(--forest);margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:.94rem}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;box-shadow:0 1px 3px rgba(60,45,25,.05)}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.fieldset{border:0;padding:0;margin:0 0 20px}
+.fieldset legend{font-family:Georgia,serif;font-size:1.05rem;color:var(--brand);
+  padding:0 0 8px;font-weight:600}
+.row{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.row label{flex:1;font-size:.92rem;color:var(--ink)}
+.row .hint{display:block;font-size:.79rem;color:var(--muted)}
+.row input{width:118px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;
+  font:inherit;font-size:.94rem;text-align:right;background:#fff;color:var(--ink)}
+.row input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.row .unit{width:52px;font-size:.84rem;color:var(--muted)}
+
+.out{background:var(--forest-deep);color:#f2ede3;border-radius:var(--radius);padding:26px;
+  position:sticky;top:18px}
+.out h3{margin:0 0 16px;color:var(--accent-light);font-size:1.2rem}
+.oline{display:flex;justify-content:space-between;gap:14px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.1);font-size:.93rem}
+.oline:last-of-type{border-bottom:0}
+.oline b{font-variant-numeric:tabular-nums}
+.headline{margin:18px 0 0;padding:18px;background:rgba(0,0,0,.24);border-radius:13px;
+  text-align:center}
+.headline .lbl{font-size:.8rem;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--accent-light)}
+.headline .big{font-size:2.5rem;font-family:Georgia,serif;margin:4px 0 0;
+  font-variant-numeric:tabular-nums}
+.headline .sub2{font-size:.85rem;opacity:.8}
+.verdict{margin-top:14px;padding:13px 16px;border-radius:11px;font-size:.93rem;text-align:center}
+.verdict.good{background:rgba(90,150,95,.22);border:1px solid rgba(120,190,125,.45)}
+.verdict.bad{background:rgba(181,67,42,.22);border:1px solid rgba(220,110,80,.5)}
+
+/* tables */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:.93rem;min-width:520px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{background:#f0e9db;font-family:Georgia,serif;font-weight:600;color:var(--forest);
+  font-size:.88rem;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.nm{font-weight:600}
+td.uom{color:var(--muted);font-size:.85rem;white-space:nowrap}
+.chg{font-size:.86rem;font-weight:600;white-space:nowrap}
+.chg.up{color:#3f7a43} .chg.down{color:var(--danger)} .chg.flat{color:var(--muted)}
+
+/* seasonality */
+.season{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;margin-bottom:18px}
+.season.muted{background:#f3efe6;border-style:dashed}
+.season-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.season-head h3{margin:0;font-size:1.16rem;color:var(--brand)}
+.tag-yrs{font-size:.8rem;color:var(--muted)}
+.bars{display:flex;gap:5px;align-items:flex-end}
+.bar-col{flex:1;min-width:0;text-align:center}
+.bar-wrap{height:96px;display:flex;align-items:flex-end;justify-content:center}
+.bar{width:70%;max-width:34px;border-radius:5px 5px 0 0;min-height:3px}
+.bar.pos{background:var(--forest-light)}
+.bar.neg{background:var(--brand-2)}
+.bar-lbl{font-size:.73rem;color:var(--muted);margin-top:5px}
+.bar-val{font-size:.72rem;font-variant-numeric:tabular-nums}
+.bar-val.pos{color:var(--forest-light)} .bar-val.neg{color:var(--brand-2)}
+.season-note{font-size:.88rem;color:var(--muted);margin:14px 0 0}
+.warn{margin:14px 0 0;padding:13px 16px;background:#fdf2ee;border-left:4px solid var(--danger);
+  border-radius:9px;font-size:.88rem}
+
+.notes{font-size:.88rem;color:var(--muted)}
+.notes li{margin-bottom:7px}
+footer{background:var(--forest-deep);color:#cfc9bc;padding:26px 0;margin-top:34px;font-size:.87rem}
+
+@media(max-width:860px){
+  .calc{grid-template-columns:1fr}
+  .out{position:static}
+  .bar-val{display:none}
+}
+@media print{
+  header,footer{background:#fff;color:#000}
+  .out{background:#fff;color:#000;border:2px solid #000}
+  .disclaimer{border-width:3px;page-break-inside:avoid}
+  .season{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header><div class="wrap hbar">
+  <strong>Foothills Livestock</strong>
+  <span>Break-Even &amp; Market Timing</span>
+  <span class="sp">Data to 2026-07</span>
+</div></header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>What does it cost you, and where is the market?</h1>
+    <p class="lede">Put your own numbers in. This works out what an animal has cost
+    you by the time it leaves the yard, what you need to get for it to break even,
+    and how that compares with where the Alberta market actually is.</p>
+  </div>
+
+  <div class="disclaimer">
+    <h2>Information only &mdash; this is NOT investment advice</h2>
+    <p>Everything on this page is general information to help you understand your own
+    costs. It is not financial, investment, tax or marketing advice, and it is not a
+    recommendation to buy or sell anything at any time.</p>
+    <p>Nothing here predicts prices. The historical section shows what happened in the
+    past. Past patterns do not tell you what the market will do next, and cattle
+    markets are driven by weather, feed, herd size, trade and currency in ways no
+    chart accounts for.</p>
+    <p>Prices shown are Statistics Canada monthly provincial averages for Alberta,
+    published to 2026-07. They are a reference point, not a quote, and not what
+    your cattle will bring on any given day. Talk to your lender, your accountant and
+    your marketing advisor before making decisions.</p>
+  </div>
+
+  <section>
+    <h2>Break-even calculator</h2>
+    <p class="sub">Defaults are placeholders. Replace them with Foothills' real figures
+    before relying on the answer.</p>
+
+    <div class="calc">
+      <div class="card">
+        <fieldset class="fieldset">
+          <legend>The cattle</legend>
+          <div class="row"><label>Head<span class="hint">how many in the group</span></label>
+            <input id="head" type="number" value="100" min="1" step="1"><span class="unit">hd</span></div>
+          <div class="row"><label>Purchase weight</label>
+            <input id="inwt" type="number" value="600" min="1" step="5"><span class="unit">lb</span></div>
+          <div class="row"><label>Purchase price</label>
+            <input id="inpr" type="number" value="511.05" min="0" step="1"><span class="unit">$/cwt</span></div>
+          <div class="row"><label>Target sale weight</label>
+            <input id="outwt" type="number" value="900" min="1" step="5"><span class="unit">lb</span></div>
+          <div class="row"><label>Average daily gain</label>
+            <input id="adg" type="number" value="2.8" min="0.1" step="0.1"><span class="unit">lb/d</span></div>
+          <div class="row"><label>Expected sale price
+            <span class="hint">what you expect to get at the sale weight &mdash; heavier
+            cattle bring less per cwt than lighter ones, so this is not the same
+            number as the purchase price</span></label>
+            <input id="outpr" type="number" value="0" min="0" step="1"><span class="unit">$/cwt</span></div>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Running costs</legend>
+          <div class="row"><label>Feed<span class="hint">per head per day</span></label>
+            <input id="feed" type="number" value="4.25" min="0" step="0.05"><span class="unit">$/d</span></div>
+          <div class="row"><label>Yardage<span class="hint">per head per day</span></label>
+            <input id="yard" type="number" value="0.55" min="0" step="0.05"><span class="unit">$/d</span></div>
+          <div class="row"><label>Interest on purchase<span class="hint">annual rate</span></label>
+            <input id="int" type="number" value="7.5" min="0" step="0.25"><span class="unit">%</span></div>
+          <div class="row"><label>Death loss</label>
+            <input id="death" type="number" value="1.5" min="0" step="0.1"><span class="unit">%</span></div>
+          <div class="row"><label>Vet and processing</label>
+            <input id="vet" type="number" value="35" min="0" step="1"><span class="unit">$/hd</span></div>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Selling costs</legend>
+          <div class="row"><label>Commission</label>
+            <input id="comm" type="number" value="2.5" min="0" step="0.1"><span class="unit">%</span></div>
+          <div class="row"><label>Check-off<span class="hint">national and provincial combined</span></label>
+            <input id="checkoff" type="number" value="7.00" min="0" step="0.5"><span class="unit">$/hd</span></div>
+          <div class="row"><label>Brand inspection</label>
+            <input id="brand" type="number" value="3.00" min="0" step="0.25"><span class="unit">$/hd</span></div>
+          <div class="row"><label>Insurance</label>
+            <input id="ins" type="number" value="1.50" min="0" step="0.25"><span class="unit">$/hd</span></div>
+          <div class="row"><label>Trucking<span class="hint">in and out, combined</span></label>
+            <input id="truck" type="number" value="28" min="0" step="1"><span class="unit">$/hd</span></div>
+        </fieldset>
+      </div>
+
+      <div>
+        <div class="out">
+          <h3>Per head</h3>
+          <div class="oline"><span>Purchase</span><b id="o-buy">&mdash;</b></div>
+          <div class="oline"><span>Feed <span id="o-days" class="hint"></span></span><b id="o-feed">&mdash;</b></div>
+          <div class="oline"><span>Yardage</span><b id="o-yard">&mdash;</b></div>
+          <div class="oline"><span>Interest</span><b id="o-int">&mdash;</b></div>
+          <div class="oline"><span>Death loss</span><b id="o-death">&mdash;</b></div>
+          <div class="oline"><span>Vet and processing</span><b id="o-vet">&mdash;</b></div>
+          <div class="oline"><span>Trucking</span><b id="o-truck">&mdash;</b></div>
+          <div class="oline"><span>Check-off, brand, insurance</span><b id="o-fees">&mdash;</b></div>
+          <div class="oline"><span>Commission</span><b id="o-comm">&mdash;</b></div>
+          <div class="oline"><span><strong>Total cost</strong></span><b id="o-total">&mdash;</b></div>
+
+          <div class="headline">
+            <div class="lbl">Break-even sale price</div>
+            <p class="big" id="o-be">&mdash;</p>
+            <div class="sub2" id="o-bewt"></div>
+          </div>
+
+          <div class="verdict" id="o-verdict"></div>
+
+          <div class="oline" style="margin-top:14px"><span>Group total cost</span><b id="o-gtotal">&mdash;</b></div>
+          <div class="oline"><span>Group margin at that price</span><b id="o-gmargin">&mdash;</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where the market is</h2>
+    <p class="sub">Statistics Canada monthly averages for Alberta, to 2026-07.
+    Reference points, not quotes.</p>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--brand)">Cattle</h3>
+      <div class="tw"><table><thead><tr><th>Class</th><th class="num">Price</th><th>Unit</th><th class="num">vs last month</th><th class="num">vs last year</th></tr></thead><tbody><tr><td class="nm">Calves for feeding</td><td class="num">683.13</td><td class="uom">$/cwt</td><td class="num"><span class="chg down">&#9660; 1.9%</span></td><td class="num"><span class="chg up">&#9650; 28.3%</span></td></tr><tr><td class="nm">Cows for slaughter</td><td class="num">248.59</td><td class="uom">$/cwt</td><td class="num"><span class="chg down">&#9660; 0.3%</span></td><td class="num"><span class="chg up">&#9650; 14.0%</span></td></tr><tr><td class="nm">Heifers for feeding</td><td class="num">493.76</td><td class="uom">$/cwt</td><td class="num"><span class="chg up">&#9650; 0.5%</span></td><td class="num"><span class="chg up">&#9650; 19.1%</span></td></tr><tr><td class="nm">Heifers for slaughter</td><td class="num">338.56</td><td class="uom">$/cwt</td><td class="num"><span class="chg down">&#9660; 3.2%</span></td><td class="num"><span class="chg up">&#9650; 14.6%</span></td></tr><tr><td class="nm">Steers for feeding</td><td class="num">511.05</td><td class="uom">$/cwt</td><td class="num"><span class="chg flat">&ndash; 0.0%</span></td><td class="num"><span class="chg up">&#9650; 17.9%</span></td></tr><tr><td class="nm">Steers for slaughter</td><td class="num">340.59</td><td class="uom">$/cwt</td><td class="num"><span class="chg down">&#9660; 3.3%</span></td><td class="num"><span class="chg up">&#9650; 14.2%</span></td></tr></tbody></table></div>
+      <h3 style="color:var(--brand)">Grain and special crops</h3>
+      <div class="tw"><table><thead><tr><th>Class</th><th class="num">Price</th><th>Unit</th><th class="num">vs last month</th><th class="num">vs last year</th></tr></thead><tbody><tr><td class="nm">Barley</td><td class="num">282.14</td><td class="uom">$/tonne</td><td class="num"><span class="chg down">&#9660; 0.7%</span></td><td class="num"><span class="chg up">&#9650; 1.4%</span></td></tr><tr><td class="nm">Barley for animal feed</td><td class="num">277.57</td><td class="uom">$/tonne</td><td class="num"><span class="chg down">&#9660; 2.4%</span></td><td class="num"><span class="chg up">&#9650; 2.4%</span></td></tr><tr><td class="nm">Canola</td><td class="num">714.77</td><td class="uom">$/tonne</td><td class="num"><span class="chg up">&#9650; 2.5%</span></td><td class="num"><span class="chg up">&#9650; 4.7%</span></td></tr><tr><td class="nm">Dry peas</td><td class="num">305.81</td><td class="uom">$/tonne</td><td class="num"><span class="chg down">&#9660; 1.7%</span></td><td class="num"><span class="chg down">&#9660; 11.5%</span></td></tr><tr><td class="nm">Durum wheat</td><td class="num">297.58</td><td class="uom">$/tonne</td><td class="num"><span class="chg up">&#9650; 0.3%</span></td><td class="num"><span class="chg down">&#9660; 16.1%</span></td></tr><tr><td class="nm">Lentils</td><td class="num">554.24</td><td class="uom">$/tonne</td><td class="num"><span class="chg down">&#9660; 4.0%</span></td><td class="num"><span class="chg down">&#9660; 14.1%</span></td></tr><tr><td class="nm">Oats</td><td class="num">242.13</td><td class="uom">$/tonne</td><td class="num"><span class="chg down">&#9660; 0.5%</span></td><td class="num"><span class="chg down">&#9660; 24.0%</span></td></tr><tr><td class="nm">Wheat (except durum)</td><td class="num">311.20</td><td class="uom">$/tonne</td><td class="num"><span class="chg up">&#9650; 2.4%</span></td><td class="num"><span class="chg flat">&ndash; 0.0%</span></td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What each month has historically done</h2>
+    <p class="sub">This is history, not a forecast. It shows how each month compared
+    with its own year's average, across 14 complete years.</p>
+    
+    <div class="season ">
+      <div class="season-head">
+        <h3>Cows for slaughter</h3>
+        <span class="tag-yrs">14 complete years, 2012 to 2025</span>
+      </div>
+      <div class="bars"><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:85%" title="Jan -8.4%"></div></div><div class="bar-lbl">Jan</div><div class="bar-val neg">-8.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:55%" title="Feb -5.4%"></div></div><div class="bar-lbl">Feb</div><div class="bar-val neg">-5.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:10%" title="Mar +1.0%"></div></div><div class="bar-lbl">Mar</div><div class="bar-val pos">+1.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:43%" title="Apr +4.2%"></div></div><div class="bar-lbl">Apr</div><div class="bar-val pos">+4.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:76%" title="May +7.5%"></div></div><div class="bar-lbl">May</div><div class="bar-val pos">+7.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:74%" title="Jun +7.3%"></div></div><div class="bar-lbl">Jun</div><div class="bar-val pos">+7.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:71%" title="Jul +7.0%"></div></div><div class="bar-lbl">Jul</div><div class="bar-val pos">+7.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:73%" title="Aug +7.2%"></div></div><div class="bar-lbl">Aug</div><div class="bar-val pos">+7.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:12%" title="Sep +1.2%"></div></div><div class="bar-lbl">Sep</div><div class="bar-val pos">+1.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:41%" title="Oct -4.0%"></div></div><div class="bar-lbl">Oct</div><div class="bar-val neg">-4.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:100%" title="Nov -9.9%"></div></div><div class="bar-lbl">Nov</div><div class="bar-val neg">-9.9</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:78%" title="Dec -7.7%"></div></div><div class="bar-lbl">Dec</div><div class="bar-val neg">-7.7</div></div></div>
+      <p class="season-note">Each bar is that month's average price compared with its own
+      year's average, so the long climb in cattle prices does not distort it.
+      Strongest May, weakest Nov, a spread of 17.4 points.</p>
+      
+    </div>
+    <div class="season ">
+      <div class="season-head">
+        <h3>Steers for slaughter</h3>
+        <span class="tag-yrs">14 complete years, 2012 to 2025</span>
+      </div>
+      <div class="bars"><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:24%" title="Jan -0.7%"></div></div><div class="bar-lbl">Jan</div><div class="bar-val neg">-0.7</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:50%" title="Feb -1.5%"></div></div><div class="bar-lbl">Feb</div><div class="bar-val neg">-1.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:2%" title="Mar -0.1%"></div></div><div class="bar-lbl">Mar</div><div class="bar-val neg">-0.1</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:43%" title="Apr +1.3%"></div></div><div class="bar-lbl">Apr</div><div class="bar-val pos">+1.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:80%" title="May +2.4%"></div></div><div class="bar-lbl">May</div><div class="bar-val pos">+2.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:52%" title="Jun +1.6%"></div></div><div class="bar-lbl">Jun</div><div class="bar-val pos">+1.6</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:11%" title="Jul -0.3%"></div></div><div class="bar-lbl">Jul</div><div class="bar-val neg">-0.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:40%" title="Aug -1.2%"></div></div><div class="bar-lbl">Aug</div><div class="bar-val neg">-1.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:84%" title="Sep -2.5%"></div></div><div class="bar-lbl">Sep</div><div class="bar-val neg">-2.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:64%" title="Oct -1.9%"></div></div><div class="bar-lbl">Oct</div><div class="bar-val neg">-1.9</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:0%" title="Nov +0.0%"></div></div><div class="bar-lbl">Nov</div><div class="bar-val pos">+0.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:100%" title="Dec +3.0%"></div></div><div class="bar-lbl">Dec</div><div class="bar-val pos">+3.0</div></div></div>
+      <p class="season-note">Each bar is that month's average price compared with its own
+      year's average, so the long climb in cattle prices does not distort it.
+      Strongest Dec, weakest Sep, a spread of 5.6 points.</p>
+      
+    </div>
+    <div class="season ">
+      <div class="season-head">
+        <h3>Heifers for slaughter</h3>
+        <span class="tag-yrs">14 complete years, 2012 to 2025</span>
+      </div>
+      <div class="bars"><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:16%" title="Jan -0.4%"></div></div><div class="bar-lbl">Jan</div><div class="bar-val neg">-0.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:46%" title="Feb -1.3%"></div></div><div class="bar-lbl">Feb</div><div class="bar-val neg">-1.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:12%" title="Mar +0.4%"></div></div><div class="bar-lbl">Mar</div><div class="bar-val pos">+0.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:43%" title="Apr +1.2%"></div></div><div class="bar-lbl">Apr</div><div class="bar-val pos">+1.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:78%" title="May +2.2%"></div></div><div class="bar-lbl">May</div><div class="bar-val pos">+2.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:49%" title="Jun +1.4%"></div></div><div class="bar-lbl">Jun</div><div class="bar-val pos">+1.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:14%" title="Jul -0.4%"></div></div><div class="bar-lbl">Jul</div><div class="bar-val neg">-0.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:44%" title="Aug -1.2%"></div></div><div class="bar-lbl">Aug</div><div class="bar-val neg">-1.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:85%" title="Sep -2.4%"></div></div><div class="bar-lbl">Sep</div><div class="bar-val neg">-2.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:65%" title="Oct -1.9%"></div></div><div class="bar-lbl">Oct</div><div class="bar-val neg">-1.9</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:12%" title="Nov -0.3%"></div></div><div class="bar-lbl">Nov</div><div class="bar-val neg">-0.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:100%" title="Dec +2.8%"></div></div><div class="bar-lbl">Dec</div><div class="bar-val pos">+2.8</div></div></div>
+      <p class="season-note">Each bar is that month's average price compared with its own
+      year's average, so the long climb in cattle prices does not distort it.
+      Strongest Dec, weakest Sep, a spread of 5.2 points.</p>
+      
+    </div>
+    <div class="season muted">
+      <div class="season-head">
+        <h3>Steers for feeding</h3>
+        <span class="tag-yrs">14 complete years, 2012 to 2025</span>
+      </div>
+      <div class="bars"><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:66%" title="Jan -4.2%"></div></div><div class="bar-lbl">Jan</div><div class="bar-val neg">-4.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:69%" title="Feb -4.5%"></div></div><div class="bar-lbl">Feb</div><div class="bar-val neg">-4.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:83%" title="Mar -5.3%"></div></div><div class="bar-lbl">Mar</div><div class="bar-val neg">-5.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:81%" title="Apr -5.2%"></div></div><div class="bar-lbl">Apr</div><div class="bar-val neg">-5.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:64%" title="May -4.1%"></div></div><div class="bar-lbl">May</div><div class="bar-val neg">-4.1</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:9%" title="Jun -0.6%"></div></div><div class="bar-lbl">Jun</div><div class="bar-val neg">-0.6</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:20%" title="Jul +1.3%"></div></div><div class="bar-lbl">Jul</div><div class="bar-val pos">+1.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:75%" title="Aug +4.8%"></div></div><div class="bar-lbl">Aug</div><div class="bar-val pos">+4.8</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:100%" title="Sep +6.4%"></div></div><div class="bar-lbl">Sep</div><div class="bar-val pos">+6.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:93%" title="Oct +6.0%"></div></div><div class="bar-lbl">Oct</div><div class="bar-val pos">+6.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:51%" title="Nov +3.3%"></div></div><div class="bar-lbl">Nov</div><div class="bar-val pos">+3.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:31%" title="Dec +2.0%"></div></div><div class="bar-lbl">Dec</div><div class="bar-val pos">+2.0</div></div></div>
+      <p class="season-note">Each bar is that month's average price compared with its own
+      year's average, so the long climb in cattle prices does not distort it.
+      Strongest Sep, weakest Mar, a spread of 11.8 points.</p>
+      <p class="warn"><strong>Read this before using the chart above.</strong> Statistics Canada publishes one feeder price for the whole province, averaged across every weight sold that month. It has no weight-class breakdown at all. In the autumn that average fills up with lighter calves, which always sell for more per hundredweight than heavy feeders. We measured that effect - the light-cattle premium alone swings 10.6% through the year, which is the same size as the pattern shown here. So this chart cannot tell you whether the same animal is worth more in September. A weight-specific feeder series answers that question; this one cannot.</p>
+    </div>
+    <div class="season muted">
+      <div class="season-head">
+        <h3>Heifers for feeding</h3>
+        <span class="tag-yrs">14 complete years, 2012 to 2025</span>
+      </div>
+      <div class="bars"><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:88%" title="Jan -5.1%"></div></div><div class="bar-lbl">Jan</div><div class="bar-val neg">-5.1</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:79%" title="Feb -4.6%"></div></div><div class="bar-lbl">Feb</div><div class="bar-val neg">-4.6</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:76%" title="Mar -4.4%"></div></div><div class="bar-lbl">Mar</div><div class="bar-val neg">-4.4</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:71%" title="Apr -4.2%"></div></div><div class="bar-lbl">Apr</div><div class="bar-val neg">-4.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:22%" title="May -1.3%"></div></div><div class="bar-lbl">May</div><div class="bar-val neg">-1.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:1%" title="Jun -0.0%"></div></div><div class="bar-lbl">Jun</div><div class="bar-val neg">-0.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:21%" title="Jul +1.2%"></div></div><div class="bar-lbl">Jul</div><div class="bar-val pos">+1.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:73%" title="Aug +4.3%"></div></div><div class="bar-lbl">Aug</div><div class="bar-val pos">+4.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:100%" title="Sep +5.9%"></div></div><div class="bar-lbl">Sep</div><div class="bar-val pos">+5.9</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:77%" title="Oct +4.5%"></div></div><div class="bar-lbl">Oct</div><div class="bar-val pos">+4.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:38%" title="Nov +2.2%"></div></div><div class="bar-lbl">Nov</div><div class="bar-val pos">+2.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:27%" title="Dec +1.6%"></div></div><div class="bar-lbl">Dec</div><div class="bar-val pos">+1.6</div></div></div>
+      <p class="season-note">Each bar is that month's average price compared with its own
+      year's average, so the long climb in cattle prices does not distort it.
+      Strongest Sep, weakest Jan, a spread of 11.0 points.</p>
+      <p class="warn"><strong>Read this before using the chart above.</strong> Statistics Canada publishes one feeder price for the whole province, averaged across every weight sold that month. It has no weight-class breakdown at all. In the autumn that average fills up with lighter calves, which always sell for more per hundredweight than heavy feeders. We measured that effect - the light-cattle premium alone swings 10.6% through the year, which is the same size as the pattern shown here. So this chart cannot tell you whether the same animal is worth more in September. A weight-specific feeder series answers that question; this one cannot.</p>
+    </div>
+    <div class="season muted">
+      <div class="season-head">
+        <h3>Calves for feeding</h3>
+        <span class="tag-yrs">14 complete years, 2012 to 2025</span>
+      </div>
+      <div class="bars"><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:100%" title="Jan -6.2%"></div></div><div class="bar-lbl">Jan</div><div class="bar-val neg">-6.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:62%" title="Feb -3.8%"></div></div><div class="bar-lbl">Feb</div><div class="bar-val neg">-3.8</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:51%" title="Mar -3.2%"></div></div><div class="bar-lbl">Mar</div><div class="bar-val neg">-3.2</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:43%" title="Apr -2.7%"></div></div><div class="bar-lbl">Apr</div><div class="bar-val neg">-2.7</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:1%" title="May +0.1%"></div></div><div class="bar-lbl">May</div><div class="bar-val pos">+0.1</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:8%" title="Jun +0.5%"></div></div><div class="bar-lbl">Jun</div><div class="bar-val pos">+0.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:21%" title="Jul -1.3%"></div></div><div class="bar-lbl">Jul</div><div class="bar-val neg">-1.3</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar neg" style="height:8%" title="Aug -0.5%"></div></div><div class="bar-lbl">Aug</div><div class="bar-val neg">-0.5</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:67%" title="Sep +4.1%"></div></div><div class="bar-lbl">Sep</div><div class="bar-val pos">+4.1</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:79%" title="Oct +4.9%"></div></div><div class="bar-lbl">Oct</div><div class="bar-val pos">+4.9</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:64%" title="Nov +4.0%"></div></div><div class="bar-lbl">Nov</div><div class="bar-val pos">+4.0</div></div><div class="bar-col"><div class="bar-wrap"><div class="bar pos" style="height:67%" title="Dec +4.1%"></div></div><div class="bar-lbl">Dec</div><div class="bar-val pos">+4.1</div></div></div>
+      <p class="season-note">Each bar is that month's average price compared with its own
+      year's average, so the long climb in cattle prices does not distort it.
+      Strongest Oct, weakest Jan, a spread of 11.0 points.</p>
+      <p class="warn"><strong>Read this before using the chart above.</strong> Statistics Canada publishes one feeder price for the whole province, averaged across every weight sold that month. It has no weight-class breakdown at all. In the autumn that average fills up with lighter calves, which always sell for more per hundredweight than heavy feeders. We measured that effect - the light-cattle premium alone swings 10.6% through the year, which is the same size as the pattern shown here. So this chart cannot tell you whether the same animal is worth more in September. A weight-specific feeder series answers that question; this one cannot.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where these numbers come from</h2>
+    <div class="card notes">
+      <ul>
+        <li>Prices are Statistics Canada table 32-10-0077, Farm product prices, crops
+        and livestock, Alberta, monthly. Free and public. Latest month available is
+        2026-07.</li>
+        <li>Cattle are quoted in dollars per hundredweight and grain in dollars per
+        tonne. Those units come from the data itself, not from an assumption.</li>
+        <li>The seasonal figures use only complete calendar years, so a part-finished
+        year cannot bias a month against its own average.</li>
+        <li>These are provincial averages across all sales in the month. They are not
+        sale-barn prices, not weight-specific, and not what any individual lot brought.</li>
+        <li>A live, weight-specific feed is not connected yet. When it is, the market
+        section updates from it and the historical section stays as it is.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer><div class="wrap">
+  Foothills Livestock &middot; Break-even and market timing &middot;
+  Generated 15 September 2026 from Statistics Canada open data &middot;
+  Information only, not investment advice
+</div></footer>
+
+<script>
+(function () {
+  var ids = ["head","inwt","inpr","outwt","adg","outpr","feed","yard","int","death","vet",
+             "comm","checkoff","brand","ins","truck"];
+  function n(id) { var v = parseFloat(document.getElementById(id).value); return isFinite(v) ? v : 0; }
+  function money(v) {
+    return (v < 0 ? "-$" : "$") +
+      Math.abs(v).toLocaleString("en-CA", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function signed(v, dp) { return (v >= 0 ? "+$" : "−$") + Math.abs(v).toFixed(dp); }
+  function signedMoney(v) { return (v >= 0 ? "+" : "−") + money(Math.abs(v)); }
+
+  var MARKET = 511.05;   // $/cwt, Statistics Canada, 2026-07
+
+  function calc() {
+    var head = n("head"), inwt = n("inwt"), inpr = n("inpr");
+    var outwt = n("outwt"), adg = n("adg");
+    var gain = Math.max(0, outwt - inwt);
+    var days = adg > 0 ? gain / adg : 0;
+
+    var buy    = inwt / 100 * inpr;
+    var feed   = days * n("feed");
+    var yard   = days * n("yard");
+    var interest = buy * (n("int") / 100) * (days / 365);
+    var death  = buy * (n("death") / 100);
+    var vet    = n("vet");
+    var truck  = n("truck");
+    var fees   = n("checkoff") + n("brand") + n("ins");
+
+    // commission is charged on the sale, which depends on the break-even we are
+    // solving for - so solve it directly rather than guessing a sale price
+    var before = buy + feed + yard + interest + death + vet + truck + fees;
+    var commRate = n("comm") / 100;
+    var total = commRate < 1 ? before / (1 - commRate) : before;
+    var comm = total - before;
+
+    var bePerCwt = outwt > 0 ? total / (outwt / 100) : 0;
+
+    document.getElementById("o-buy").textContent   = money(buy);
+    document.getElementById("o-feed").textContent  = money(feed);
+    document.getElementById("o-yard").textContent  = money(yard);
+    document.getElementById("o-int").textContent   = money(interest);
+    document.getElementById("o-death").textContent = money(death);
+    document.getElementById("o-vet").textContent   = money(vet);
+    document.getElementById("o-truck").textContent = money(truck);
+    document.getElementById("o-fees").textContent  = money(fees);
+    document.getElementById("o-comm").textContent  = money(comm);
+    document.getElementById("o-total").textContent = money(total);
+    document.getElementById("o-days").textContent  =
+      days > 0 ? "(" + days.toFixed(0) + " days, " + gain.toFixed(0) + " lb gain)" : "";
+
+    document.getElementById("o-be").textContent = "$" + bePerCwt.toFixed(2);
+    document.getElementById("o-bewt").textContent =
+      "per cwt, to cover " + money(total) + " at " + outwt.toFixed(0) + " lb";
+
+    var v = document.getElementById("o-verdict");
+    var sale = n("outpr");
+    if (sale > 0 && bePerCwt > 0) {
+      var diff = sale - bePerCwt;
+      var per = diff * (outwt / 100);
+      v.className = "verdict " + (diff >= 0 ? "good" : "bad");
+      v.innerHTML = "At <b>$" + sale.toFixed(2) + "</b>/cwt you are <b>" +
+        signed(diff, 2) + "</b>/cwt against your break-even, which is <b>" +
+        signedMoney(per) + "</b> a head.";
+      document.getElementById("o-gmargin").textContent = signedMoney(per * head);
+    } else {
+      v.className = "verdict";
+      v.innerHTML = "Put in an expected sale price above to see the margin. " +
+        "For reference the last published Alberta average was <b>$" +
+        MARKET.toFixed(2) + "</b>/cwt, but that is an average across every weight " +
+        "sold that month, not the price for a " + outwt.toFixed(0) + " lb animal.";
+      document.getElementById("o-gmargin").textContent = "—";
+    }
+    document.getElementById("o-gtotal").textContent = money(total * head);
+  }
+
+  ids.forEach(function (id) {
+    var el = document.getElementById(id);
+    el.addEventListener("input", calc);
+    el.addEventListener("change", calc);
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
