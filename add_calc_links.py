@@ -33,7 +33,7 @@ STYLE = """<style id="fh-calc-nav">
 
 DESKTOP_BTN = (f'<a href="{CALC}" class="btn calc-pop">Finance Calculator</a>')
 DROPDOWN = (f'<a href="{CALC}"><strong>Finance Calculator</strong>'
-            f'<span>Work out cost per head before you bid</span></a>')
+            f'<span>Know your cost per head</span></a>')
 MOBILE = f'<a href="{CALC}">Finance Calculator</a>'
 FOOTER = f'<a href="{CALC}">Finance Calculator</a>'
 
@@ -54,7 +54,7 @@ def patch(html, name):
 
     desktop_btn = f'<a href="{href}" class="btn calc-pop">Finance Calculator</a>'
     dropdown = (f'<a href="{href}"><strong>Finance Calculator</strong>'
-                f'<span>Work out cost per head before you bid</span></a>')
+                f'<span>Know your cost per head</span></a>')
     mobile = f'<a href="{href}">Finance Calculator</a>'
     footer = f'<a href="{href}">Finance Calculator</a>'
     drop_anchor = f'<a href="{pre}fieldmen.html"><strong>Fieldmen</strong>'
