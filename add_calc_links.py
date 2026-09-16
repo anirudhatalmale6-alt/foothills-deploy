@@ -40,7 +40,16 @@ STYLE = """<style id="fh-calc-nav">
    Matching home's values, and only above the width where the existing media
    query takes over, so the responsive behaviour below that is untouched. */
 @media (min-width: 1121px){
-  .nav-cta .btn, .nav-actions .btn{font-size:.9rem;padding:11px 22px}
+  /* !important because this site carries further <style> blocks AFTER the
+     one we inject, so being last in the head is not enough to win. */
+  .nav-cta .btn, .nav-actions .btn{font-size:.9rem !important;padding:11px 22px !important}
+}
+/* Single line, matching the home page, but only where the row genuinely fits.
+   Measured: at 1360px and up nothing overflows; below that the labels wrap
+   instead, which is better than a sideways scrollbar. Worth knowing the home
+   page itself overflows at 1366 and below today. */
+@media (min-width: 1360px){
+  .nav-cta .btn, .nav-actions .btn{white-space:nowrap !important}
 }
 </style>"""
 
@@ -83,9 +92,21 @@ def patch(html, name):
         html = html.replace(OLD_DESC, NEW_DESC)
         notes.append("updated the old wording")
 
-    # 0. the stylesheet, once, just before </head>
-    if 'id="fh-calc-nav"' in html:
-        notes.append("style already present")
+    # 0. the stylesheet, just before </head>.
+    #
+    # This REPLACES an existing block rather than skipping when one is found.
+    # Skipping on presence is how a changed stylesheet silently never reaches a
+    # site that already has the old one - the run reports "already present" on
+    # every page and nothing updates. That happened with the button sizing: the
+    # rule was in the repo, the deploy said OK, and the live pages kept the old
+    # 966-character block.
+    existing = re.search(r'<style id="fh-calc-nav">.*?</style>', html, re.S)
+    if existing:
+        if existing.group(0).strip() == STYLE.strip():
+            notes.append("style already current")
+        else:
+            html = html[:existing.start()] + STYLE + html[existing.end():]
+            notes.append("style UPDATED")
     elif "</head>" in html:
         html = html.replace("</head>", STYLE + "</head>", 1)
         notes.append("style added")
