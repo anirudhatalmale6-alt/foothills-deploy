@@ -71,13 +71,30 @@ done
 ok "$ADDED page(s) credited, $HAD already had it, $MISS had no footer line"
 
 say "Checking the server"
-SERVED=0; TOTAL=0
+# Only pages that HAVE the footer can carry the credit. This site root also
+# holds internal documents - access guides, the seo plan, the Google
+# verification file - with no footer at all, and counting those as failures
+# reported "28 of 38" on a run where every eligible page was correct.
+SERVED=0; ELIGIBLE=0; NOFOOTER=0
 for f in "$SITE"/*.html; do
-  n=$(basename "$f"); TOTAL=$((TOTAL+1))
+  n=$(basename "$f")
+  if ! grep -q 'Proudly serving Western Canadian producers since 1996\.' "$f"; then
+    NOFOOTER=$((NOFOOTER+1)); continue
+  fi
+  ELIGIBLE=$((ELIGIBLE+1))
   curl -sS -m 20 -o "$TMP/c" -H "Host: $HOST" "http://127.0.0.1/$n" 2>/dev/null
-  grep -q 'sitebuilder360\.com' "$TMP/c" && SERVED=$((SERVED+1))
+  if grep -q 'sitebuilder360\.com' "$TMP/c"; then
+    SERVED=$((SERVED+1))
+  else
+    bad "$n has a footer but does not serve the credit"
+  fi
 done
-[ "$SERVED" -eq "$TOTAL" ] && ok "all $TOTAL pages serve the credit" || bad "$SERVED of $TOTAL pages serve it"
+[ "$NOFOOTER" -gt 0 ] && note "$NOFOOTER file(s) have no footer and were not expected to carry it"
+if [ "$ELIGIBLE" -eq 0 ]; then
+  bad "no page on this site has the footer line - wrong machine?"
+elif [ "$SERVED" -eq "$ELIGIBLE" ]; then
+  ok "all $ELIGIBLE pages with a footer serve the credit"
+fi
 
 # A credit that links nowhere is worse than none. Check the target answers.
 code=$(curl -sSL -m 25 -o /dev/null -w '%{http_code}' "https://sitebuilder360.com/" 2>/dev/null)
