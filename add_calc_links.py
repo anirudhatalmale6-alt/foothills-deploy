@@ -60,6 +60,16 @@ def patch(html, name):
     drop_anchor = f'<a href="{pre}fieldmen.html"><strong>Fieldmen</strong>'
     notes.append("absolute paths" if absolute else "relative paths")
 
+    # Wording changed after the first deploy. Without this, a page carrying the
+    # OLD description would not match the new guard, so the patcher would add a
+    # SECOND dropdown entry rather than recognising the one already there.
+    # Migrate the text first, then every guard below behaves correctly.
+    OLD_DESC = "Work out cost per head before you bid"
+    NEW_DESC = "Know your cost per head"
+    if OLD_DESC in html:
+        html = html.replace(OLD_DESC, NEW_DESC)
+        notes.append("updated the old wording")
+
     # 0. the stylesheet, once, just before </head>
     if 'id="fh-calc-nav"' in html:
         notes.append("style already present")
