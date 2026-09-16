@@ -29,6 +29,19 @@ STYLE = """<style id="fh-calc-nav">
   70%{opacity:0;transform:scale(1.13)}100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){.btn.calc-pop::after{animation:none}}
 .mobile-menu .btn.calc-pop{display:block;text-align:center;margin-top:6px}
+
+/* The header buttons are a different size on the inner pages than on the home
+   page, and it is not our doing - the two were built from different
+   stylesheets. Home defines .btn with font-size .9rem; the inner pages define
+   .btn with no font-size at all, so it inherits 16px from the body, and they
+   only pick up .9rem below 1120px. On a desktop that makes the header buttons
+   70px tall against home's 47px.
+
+   Matching home's values, and only above the width where the existing media
+   query takes over, so the responsive behaviour below that is untouched. */
+@media (min-width: 1121px){
+  .nav-cta .btn, .nav-actions .btn{font-size:.9rem;padding:11px 22px}
+}
 </style>"""
 
 DESKTOP_BTN = (f'<a href="{CALC}" class="btn calc-pop">Finance Calculator</a>')
