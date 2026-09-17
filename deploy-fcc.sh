@@ -18,8 +18,17 @@
 #      copied from forms.html, so all three pages now read identically.
 #
 #   2. forms.html
-#      The two shared applications are renamed to "Breeder / Feeder Individual
-#      Loan Application" and "Breeder / Feeder Business Loan Application".
+#      Rebuilt to carry all NINE forms, grouped by division, each named for its
+#      division exactly as Glenn listed them:
+#
+#        Breeders  Individual Loan / Business Loan / FCC Consent /
+#                  Full Mortality Claim / Accidental Death Claim
+#        Feeders   Individual Loan / Business Loan / FCC Consent /
+#                  Full Mortality Claim
+#
+#      Nine entries, six files behind them - the loan forms serve both
+#      divisions through ?div=, and the consent PDF is listed once per
+#      division because it is the same document for both.
 #
 #   3. The loan forms themselves
 #      A Breeders application and a Feeders application used to download under
@@ -86,12 +95,26 @@ for f in breeders-division.html feeders-division.html; do
 done
 
 code=$(curl -sS -m 25 -o "$TMP/c" -w '%{http_code}' -H "Host: $HOST" "http://127.0.0.1/forms.html" 2>/dev/null)
-ren=$(grep -o 'Breeder / Feeder' "$TMP/c" 2>/dev/null | wc -l)
-if [ "$code" = "200" ] && [ "$ren" -ge 2 ]; then
-  ok "forms.html - 200, both applications renamed"
+# 'class="form-card' on its own also matches class="form-card-footer", which is
+# inside every card - it counted 14 for 7 cards. Match the full class list.
+cards=$(grep -o 'class="form-card reveal"' "$TMP/c" 2>/dev/null | wc -l)
+reqs=$(grep -o 'class="req-card' "$TMP/c" 2>/dev/null | wc -l)
+# 7 ordinary cards + 2 consent cards = the 9 forms Glenn listed
+if [ "$code" = "200" ] && [ "$cards" -eq 7 ] && [ "$reqs" -eq 2 ]; then
+  ok "forms.html - 200, all 9 forms present (7 cards + 2 consent)"
 else
-  bad "forms.html - HTTP $code, 'Breeder / Feeder' appears $ren time(s), expected at least 2"
+  bad "forms.html - HTTP $code, $cards form cards and $reqs consent cards (expected 7 and 2)"
 fi
+MISSING=0
+for want in "Breeders Individual Loan Application" "Breeders Business Loan Application" \
+            "Breeders FCC Producer Consent" "Breeders Full Mortality Claim" \
+            "Breeders Accidental Death Claim" "Feeders Individual Loan Application" \
+            "Feeders Business Loan Application" "Feeders FCC Producer Consent" \
+            "Feeders Full Mortality Claim"; do
+  n=$(grep -o "$want" "$TMP/c" 2>/dev/null | wc -l)
+  if [ "$n" -lt 1 ]; then bad "forms.html is missing: $want"; MISSING=$((MISSING+1)); fi
+done
+[ "$MISSING" -eq 0 ] && ok "every one of the 9 forms is named exactly as you listed it"
 
 say "Checking the saved-application filename"
 for f in foothills-loan-individual.html foothills-loan-business.html; do
